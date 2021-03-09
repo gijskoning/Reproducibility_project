@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nodes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/nodes_file.xsd">
+
+   <!-- The Traffic Lights -->
+   <node id="0" x="+500.0" y="+500.0"  type="traffic_light"/>
+   <node id="1" x="+500.0" y="+1000.0" type="traffic_light"/>
+    
+   <!-- Left Light 0 -->
+   <node id="left0" x="0.0" y="+500.0" type="priority" />
+
+   <!-- Bottom Light 0 -->
+   <node id="bottom0" x="+500.0" y="0.0" type="priority" />
+    
+   <!-- Right Light 0 -->
+   <node id="right0" x="+1000.0" y="+500.0" type="priority" />
+
+   <!-- Left Light 1 -->
+   <node id="left1" x="0.0" y="+1000.0" type="priority" />
+    
+   <!-- Right Light 1 -->
+   <node id="right1" x="+1000.0" y="+1000.0" type="priority" />
+
+   <!-- Top Light 1 -->
+   <node id="top1" x="+500.0" y="+1500.0" type="priority" />
+
+</nodes>

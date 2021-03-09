@@ -1,0 +1,31 @@
+parameters:
+    # Common hyperparameters
+    mode: 'train'
+    name: 'RNN'
+    env_type: 'sumo' # 'atari', 'SUMO', or 'gridworld'
+    scene: 'loop_network'
+    max_steps: 2.0e+6
+    obs_type: vector
+    obs_size: 30
+    time_horizon: 128
+    num_epoch: 3
+    max_episode_steps: 250
+    batch_size: 32
+    summary_frequency: 5.0e+4
+
+    # MAIN MODEL
+    # Fully connected module
+    fully_connected: true
+    num_fc_layers: 1
+    num_fc_units: [256]
+    # Convolutional module
+    convolutional: false
+    # Recurrent module
+    recurrent: true
+    num_rec_layers: 1
+    num_rec_units: 128
+    seq_len: 32
+
+    # INFLUENCE MODEL
+    influence: false
+

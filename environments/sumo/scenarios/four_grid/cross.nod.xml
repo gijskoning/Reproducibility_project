@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<nodes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/nodes_file.xsd">
+   <node id="0" x="0.0" y="0.0"  type="traffic_light"/>
+   <node id="1" x="+500.0" y="0.0" type="traffic_light"/>
+   <node id="2" x="0.0" y="-500.0" type="traffic_light"/>
+   <node id="3" x="+500.0" y="-500.0" type="traffic_light"/>
+
+   <!-- Left exits -->
+   <node id="10" x="-500.0" y="0.0" type="priority" />
+   <node id="510" x="-510.0" y="0.0" type="priority" />
+   <node id="12" x="-500.0" y="-500.0" type="priority" />
+   <node id="512" x="-510.0" y="-500.0" type="priority" />
+
+   <!-- Right exits -->
+   <node id="21" x="1000.0" y="0.0" type="priority" />
+   <node id="521" x="1010.0" y="0.0" type="priority" />
+   <node id="23" x="1000.0" y="-500.0" type="priority" />
+   <node id="523" x="1010.0" y="-500.0" type="priority" />
+
+   <!-- Top exits -->
+   <node id="30" x="0.0" y="500.0" type="priority" />
+   <node id="530" x="0.0" y="510.0" type="priority" />
+   <node id="31" x="500.0" y="500.0" type="priority" />
+   <node id="531" x="500.0" y="510.0" type="priority" />
+
+   <!-- Bottom exits -->
+   <node id="42" x="0.0" y="-1000.0" type="priority" />
+   <node id="542" x="0.0" y="-1010.0" type="priority" />
+   <node id="43" x="500.0" y="-1000.0" type="priority" />
+   <node id="543" x="500.0" y="-1010.0" type="priority" />
+</nodes>

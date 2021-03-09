@@ -1,0 +1,9 @@
+<factors>
+	<actionfilter>MajorityVote</actionfilter>
+	<factor>
+		<id>0</id>
+		<agentid>0</agentid>
+		<rewardtype>RewardFromSpeedInArea</rewardtype>
+		<learnalgorithm>DQN</learnalgorithm>
+	</factor>
+</factors>

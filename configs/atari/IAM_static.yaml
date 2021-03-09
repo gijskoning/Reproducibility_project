@@ -1,0 +1,73 @@
+parameters:
+    # Common hyperparameters
+    mode: 'train'
+    load: false
+    name: 'FNN+RNN'
+    algorithm: PPO
+    port: 8000
+    gui: false
+    env_type: 'atari' # 'atari', 'SUMO', or 'gridworld'
+    scene: 'BreakoutNoFrameskip-v4'
+    flicker: false
+    max_steps: 1.0e+7
+    max_episode_steps: 5.0e+3
+    num_frames: 1
+    skip_frames: 4
+    num_epoch: 3
+    gamma: 0.99
+    lambda: 0.95
+    learning_rate: 2.5e-4
+    batch_size: 32
+    memory_size: 128
+    train_frequency: 1
+    save_frequency: 1.0e+5
+    summary_frequency: 1.0e+5
+    tensorboard: true
+    iteration: -1
+    episode: 0
+    # Bounding box
+    box_height: 84
+    box_width: 84
+    box_center: [0, 0]
+    frame_height: 84
+    frame_width: 84
+
+    # MAIN MODEL
+    # Fully connected module
+    fully_connected: true
+    num_fc_layers: 1
+    num_fc_units: [256]
+    # Convolutional module
+    convolutional: true
+    num_conv_layers: 3
+    num_filters: [32, 64, 64]
+    kernel_sizes: [8, 4, 3]
+    strides: [4, 2, 1]
+    # Recurrent module
+    recurrent: false
+
+    # INFLUENCE MODEL
+    influence: true
+    # Attention
+    attention: false
+    automatic_dpatch: false
+    manual_dpatch: true
+    num_att_units: [256]
+    # This boxes now refer to the output of the last conv layer (Check how to manually compute this)
+    inf_box_height: [7]
+    inf_box_width: [7]
+    inf_box_center: [[0, 0]]
+    inf_num_predictors: 1
+    # Influence fully connected module
+    inf_num_fc_layers: 0
+    inf_num_fc_units: [128]
+    # Influence recurrent module
+    inf_num_rec_units: 256
+    inf_seq_len: 4
+
+    # PPO only
+    num_workers: 8
+    beta: 1.0e-2
+    epsilon: 0.1
+    time_horizon: 128
+    c1: 1

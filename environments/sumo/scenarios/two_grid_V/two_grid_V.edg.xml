@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edges xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/edges_file.xsd">
+
+   <!-- Left to Light 0 -->
+   <edge id="left_l0" from="left0" to="0" numLanes="1" speed="70.0" />
+
+   <!-- Left to Light 1 -->
+   <edge id="left_l1" from="left1" to="1" numLanes="1" speed="70.0" />
+
+   <!-- Light 0 to Left -->
+   <edge id="l0_left" from="0" to="left0" numLanes="1" speed="70.0" />
+
+   <!-- Light 1 to Left -->
+   <edge id="l1_left" from="1" to="left1" numLanes="1" speed="70.0" />
+
+   <!-- Right to Light 0 -->
+   <edge id="right_l0" from="right0" to="0" numLanes="1" speed="70.0" />
+
+   <!-- Right to Light 1 -->
+   <edge id="right_l1" from="right1" to="1" numLanes="1" speed="70.0" />
+
+   <!-- Light 0 to Right -->
+   <edge id="l0_right" from="0" to="right0" numLanes="1" speed="70.0" />
+
+   <!-- Light 1 to Right -->
+   <edge id="l1_right" from="1" to="right1" numLanes="1" speed="70.0" />
+
+   <!-- Bottom to Light 0 -->
+   <edge id="bottom_l0" from="bottom0" to="0" numLanes="1" speed="70.0" />
+
+   <!-- Light 0 to Bottom -->
+   <edge id="l0_bottom" from="0" to="bottom0" numLanes="1" speed="70.0" />
+
+   <!-- Top to Light 1 -->
+   <edge id="top_l1" from="top1" to="1" numLanes="1" speed="70.0" />
+
+   <!-- Light 1 to Top -->
+   <edge id="l1_top" from="1" to="top1" numLanes="1" speed="70.0" />
+
+   <!-- Light 0 to Light 1 -->
+   <edge id="l0_l1" from="0" to="1" numLanes="1" speed="70.0" />
+
+   <!-- Light 1 to Light 0 -->
+   <edge id="l1_l0" from="1" to="0" numLanes="1" speed="70.0" />
+
+</edges>

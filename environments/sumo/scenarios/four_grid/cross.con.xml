@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<connections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/connections_file.xsd">
+
+	<!-- Upper horizontal -->
+	<connection from="10_0" to="0_1" />
+	<connection from="0_1" to="1_21" />
+	<connection from="21_1" to="1_0" />
+	<connection from="1_0" to="0_10" />
+
+	<!-- Lower horizontal -->
+	<connection from="12_2" to="2_3" />
+	<connection from="2_3" to="3_23" />
+	<connection from="23_3" to="3_2" />
+	<connection from="3_2" to="2_12"/>
+
+	<!-- Left vertical -->
+	<connection from="30_0" to="0_2" />
+	<connection from="0_2" to="2_42" />
+	<connection from="42_2" to="2_0" />
+	<connection from="2_0" to="0_30" />
+
+	<!-- Right vertical -->
+	<connection from="31_1" to="1_3" />
+	<connection from="1_3" to="3_43" />
+	<connection from="43_3" to="3_1" />
+	<connection from="3_1" to="1_31" />
+
+	<!-- Outer edges -->
+	<connection from="30_530" to="530_30" />
+	<connection from="31_531" to="531_31" />
+	<connection from="21_521" to="521_21" />
+	<connection from="23_523" to="523_23" />
+	<connection from="43_543" to="543_43" />
+	<connection from="42_542" to="542_42" />
+	<connection from="12_512" to="512_12" />
+	<connection from="10_510" to="510_10" />
+</connections>

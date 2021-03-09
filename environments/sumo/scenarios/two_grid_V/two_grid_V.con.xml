@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<connections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/connections_file.xsd">
+    
+    <!-- from bottom to top -->
+    <connection from="bottom_l0" to="l0_l1" />
+    <connection from="l0_l1" to="l1_top" />
+
+    <!-- from top to bottom -->
+    <connection from="top_l1" to="l1_l0" />
+    <connection from="l1_l0" to="l0_bottom" />
+
+    <!-- from left to right -->
+    <connection from="left_l0" to="l0_right" />
+    <connection from="left_l1" to="l1_right" />
+
+    <!-- from right to left -->
+    <connection from="right_l0" to="l0_left" />
+    <connection from="right_l1" to="l1_left" />
+
+</connections>

@@ -1,0 +1,35 @@
+parameters:
+    # Common hyperparameters
+    mode: 'train'
+    name: 'manual_dpatch'
+    env_type: 'sumo' # 'atari', 'SUMO', or 'gridworld'
+    scene: 'loop_network'
+    max_steps: 2.0e+6
+    obs_type: 'vector'
+    obs_size: 30
+    max_episode_steps: 250
+    summary_frequency: 5.0e+4
+    
+    # MAIN MODEL
+    # Fully connected module
+    fully_connected: true
+    num_fc_layers: 2
+    num_fc_units: [248, 64]
+    # Convolutional module
+    convolutional: false
+    # Recurrent module
+    recurrent: false
+
+    # INFLUENCE MODEL
+    influence: true
+    # Attention
+    attention: false
+    automatic_dpatch: false
+    manual_dpatch: true
+    # D-set
+    inf_num_predictors: 4
+    dset: [13, 14, 28, 29]
+    # Influence recurrent module
+    inf_num_rec_units: 8
+    inf_seq_len: 32
+

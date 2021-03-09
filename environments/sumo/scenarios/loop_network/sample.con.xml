@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<connections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/connections_file.xsd">
+    <connection from="L61" to="L62" fromLane="0" toLane="0" speed="8.3"/>
+    <connection from="L62" to="L63" fromLane="0" toLane="0" speed="8.3"/>
+    <connection from="L63" to="L64" fromLane="0" toLane="0" speed="8.3"/>
+    <connection from="L64" to="L65" fromLane="0" toLane="0" speed="8.3"/>
+
+    <connection from="L65" to="L66" fromLane="0" toLane="0" speed="8.3"/>
+    <connection from="L66" to="L67" fromLane="0" toLane="0" speed="8.3"/>
+    <connection from="L67" to="L68" fromLane="0" toLane="0" speed="8.3"/>
+    <connection from="L68" to="L61" fromLane="0" toLane="0" speed="8.3"/>
+
+    <connection from="L64" to="L61" fromLane="0" toLane="0" speed="8.3"/>
+    <connection from="L68" to="L65" fromLane="0" toLane="0" speed="8.3"/>
+
+</connections>

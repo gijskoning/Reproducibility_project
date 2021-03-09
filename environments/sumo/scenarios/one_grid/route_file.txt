@@ -1,0 +1,4 @@
+right, 54o 4i 3o 53i
+left, 51o 1i 2o 52i
+up, 53o 3i 4o 54i
+down, 52o 2i 1o 51i

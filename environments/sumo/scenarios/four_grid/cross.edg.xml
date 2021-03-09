@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<edges xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/edges_file.xsd">
+   <!-- Connections between traffic lights -->
+   <edge id="1_0" from="1" to="0" priority="78" numLanes="1" speed="70.0" />
+   <edge id="0_1" from="0" to="1" priority="46" numLanes="1" speed="70.0" />
+
+   <edge id="0_2" from="0" to="2" priority="78" numLanes="1" speed="70.0" />
+   <edge id="2_0" from="2" to="0" priority="46" numLanes="1" speed="70.0" />
+
+   <edge id="2_3" from="2" to="3" priority="78" numLanes="1" speed="70.0" />
+   <edge id="3_2" from="3" to="2" priority="46" numLanes="1" speed="70.0" />
+
+   <edge id="3_1" from="3" to="1" priority="78" numLanes="1" speed="70.0" />
+   <edge id="1_3" from="1" to="3" priority="46" numLanes="1" speed="70.0" />
+
+   <!-- Connections with exits from 0 --> 
+   <edge id="10_0" from="10" to="0" priority="78" numLanes="1" speed="70.0" />
+   <edge id="0_10" from="0" to="10" priority="46" numLanes="1" speed="70.0" />
+   <edge id="510_10" from="510" to="10" priority="78" numLanes="1" speed="70.0" />
+   <edge id="10_510" from="10" to="510" priority="46" numLanes="1" speed="70.0" />
+
+   <edge id="30_0" from="30" to="0" priority="78" numLanes="1" speed="70.0" />
+   <edge id="0_30" from="0" to="30" priority="46" numLanes="1" speed="70.0" />
+   <edge id="530_30" from="530" to="30" priority="78" numLanes="1" speed="70.0" />
+   <edge id="30_530" from="30" to="530" priority="46" numLanes="1" speed="70.0" />
+
+   <!-- Connections with exits from 1 -->
+   <edge id="21_1" from="21" to="1" priority="78" numLanes="1" speed="70.0" />
+   <edge id="1_21" from="1" to="21" priority="46" numLanes="1" speed="70.0" />
+   <edge id="521_21" from="521" to="21" priority="78" numLanes="1" speed="70.0" />
+   <edge id="21_521" from="21" to="521" priority="46" numLanes="1" speed="70.0" />
+
+   <edge id="31_1" from="31" to="1" priority="78" numLanes="1" speed="70.0" />
+   <edge id="1_31" from="1" to="31" priority="46" numLanes="1" speed="70.0" />
+   <edge id="531_31" from="531" to="31" priority="78" numLanes="1" speed="70.0" />
+   <edge id="31_531" from="31" to="531" priority="46" numLanes="1" speed="70.0" />
+
+   <!-- Connections with exits from 2 -->
+   <edge id="12_2" from="12" to="2" priority="78" numLanes="1" speed="70.0" />
+   <edge id="2_12" from="2" to="12" priority="46" numLanes="1" speed="70.0" />
+   <edge id="512_12" from="512" to="12" priority="78" numLanes="1" speed="70.0" />
+   <edge id="12_512" from="12" to="512" priority="46" numLanes="1" speed="70.0" />
+
+   <edge id="42_2" from="42" to="2" priority="78" numLanes="1" speed="70.0" />
+   <edge id="2_42" from="2" to="42" priority="46" numLanes="1" speed="70.0" />
+   <edge id="542_42" from="542" to="42" priority="78" numLanes="1" speed="70.0" />
+   <edge id="42_542" from="42" to="542" priority="46" numLanes="1" speed="70.0" />
+
+   <!-- Connections with exits from 3 -->
+   <edge id="23_3" from="23" to="3" priority="78" numLanes="1" speed="70.0" />
+   <edge id="3_23" from="3" to="23" priority="46" numLanes="1" speed="70.0" />
+   <edge id="523_23" from="523" to="23" priority="78" numLanes="1" speed="70.0" />
+   <edge id="23_523" from="23" to="523" priority="46" numLanes="1" speed="70.0" />
+
+   <edge id="43_3" from="43" to="3" priority="78" numLanes="1" speed="70.0" />
+   <edge id="3_43" from="3" to="43" priority="46" numLanes="1" speed="70.0" />
+   <edge id="543_43" from="543" to="43" priority="78" numLanes="1" speed="70.0" />
+   <edge id="43_543" from="43" to="543" priority="46" numLanes="1" speed="70.0" />
+</edges>

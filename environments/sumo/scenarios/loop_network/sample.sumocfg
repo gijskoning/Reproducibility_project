@@ -1,0 +1,11 @@
+<configuration>
+    <input>
+        <net-file value="sample.net.xml"/>
+        <route-files value="sample.rou.xml"/>
+        <gui-settings-file value="gui-settings.cfg"/>
+    </input>
+    <time>
+        <begin value="0"/>
+        <end value="10000"/>
+    </time>
+</configuration>
