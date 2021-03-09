@@ -4,3 +4,4 @@ torchvision
 matplotlib
 torchsummary
 jupyterlab
+pylint
