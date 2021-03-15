@@ -1,6 +1,6 @@
-from controller import Controller
-from PPO.PPOmodel import PPOmodel
-from buffer import SerialSampling
+from old_files.controller import Controller
+from old_files.PPO import PPOmodel
+from old_files.buffer import SerialSampling
 import numpy as np
 
 

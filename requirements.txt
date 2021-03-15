@@ -6,3 +6,5 @@ torchsummary
 jupyterlab
 pylint
 baselines
+pybullet
+stable-baselines3

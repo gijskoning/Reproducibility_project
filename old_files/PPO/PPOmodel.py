@@ -1,7 +1,6 @@
-from networks import Networks as net
 # import tensorflow as tf
 # import tensorflow.contrib.layers as c_layers
-from model import Model
+from old_files.model import Model
 import numpy as np
 import time
 
