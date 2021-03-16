@@ -11,6 +11,7 @@ import matplotlib.patches as patches
 import networkx as nx
 import csv
 
+
 class Warehouse(object):
     """
     warehouse environment
@@ -21,8 +22,9 @@ class Warehouse(object):
                2: 'LEFT',
                3: 'RIGHT'}
 
-    def __init__(self, seed, parameters):
-        # parameters = read_parameters('warehouse')
+    def __init__(self, parameters=None):
+        if parameters is None:
+            parameters = read_parameters('parameters')
         # parameters = parse_arguments()
         self.n_columns = 7
         self.n_rows = 7
@@ -39,12 +41,18 @@ class Warehouse(object):
         self.obs_type = 'vector'
         self.items = []
         self.img = None
+
+        # todo temp
+        self.reward_range = 2
+        self.metadata = 2
+
         # self.reset()
         self.max_waiting_time = 8
         self.total_steps = 0
         self.parameters = parameters
         self.reset()
-        self.seed(seed)
+        # self.seed(seed)
+
     ############################## Override ###############################
 
     def reset(self):
@@ -58,7 +66,7 @@ class Warehouse(object):
         self._add_items()
         obs = self._get_observation()
         if self.parameters['num_frames'] > 1:
-            self.prev_obs = np.zeros(self.parameters['obs_size']-len(obs))
+            self.prev_obs = np.zeros(self.parameters['obs_size'] - len(obs))
             obs = np.append(obs, self.prev_obs)
             self.prev_obs = np.copy(obs)
         self.episode_length = 0
@@ -84,11 +92,17 @@ class Warehouse(object):
         done = (self.max_episode_length <= self.episode_length)
         if self.render_bool:
             self.render(self.render_delay)
-        return obs, reward, done, []
+
+        # PPO algo expects "obs, reward, done, infos" here
+        # Todo not sure if r should be equal to reward
+        infos = {'episode': {'r': reward}}
+        return obs, reward, done, infos
 
     @property
     def observation_space(self):
-        return None
+        # todo need to fix observation space
+        # low and high are just guessed!
+        return spaces.Box(low=-10, high=10, shape=(584,))
 
     @property
     def action_space(self):
@@ -96,10 +110,13 @@ class Warehouse(object):
         Returns A gym dict containing the number of action choices for all the
         agents in the environment
         """
+        # todo environment has different agents??
+        #  Currently there is only one robot setup. So simplify the current code:
         n_actions = spaces.Discrete(len(self.ACTIONS))
-        action_dict = {robot.get_id:n_actions for robot in self.robots}
-        action_space = spaces.Dict(action_dict)
-        action_space.n = 4
+        # action_dict = {robot.get_id: n_actions for robot in self.robots}
+        # action_space = spaces.Dict(action_dict)
+        # action_space.n = 4
+        action_space = n_actions
         return action_space
 
     def render(self, delay=0.0):
@@ -109,25 +126,25 @@ class Warehouse(object):
         bitmap = self._get_state()
         position = self.robots[self.learning_robot_id].get_position
         bitmap[position[0], position[1], 1] += 1
-        im = bitmap[:, :, 0] - 2*bitmap[:, :, 1]
+        im = bitmap[:, :, 0] - 2 * bitmap[:, :, 1]
         if self.img is None:
-            fig,ax = plt.subplots(1)
+            fig, ax = plt.subplots(1)
             self.img = ax.imshow(im, vmin=-2, vmax=1)
             for robot_id, robot in enumerate(self.robots):
                 domain = robot.get_domain
                 y = domain[0]
                 x = domain[1]
                 color = 'k'
-                linestyle='-'
-                linewidth=2
-                rect1 = patches.Rectangle((x+0.5, y+0.5), self.robot_domain_size[0]-2,
-                                         self.robot_domain_size[1]-2, linewidth=linewidth,
-                                         edgecolor=color, linestyle=linestyle,
-                                         facecolor='none')
-                rect2 = patches.Rectangle((x-0.48, y-0.48), self.robot_domain_size[0]-0.02,
-                                         self.robot_domain_size[1]-0.02, linewidth=3,
-                                         edgecolor=color, linestyle=linestyle,
-                                         facecolor='none')
+                linestyle = '-'
+                linewidth = 2
+                rect1 = patches.Rectangle((x + 0.5, y + 0.5), self.robot_domain_size[0] - 2,
+                                          self.robot_domain_size[1] - 2, linewidth=linewidth,
+                                          edgecolor=color, linestyle=linestyle,
+                                          facecolor='none')
+                rect2 = patches.Rectangle((x - 0.48, y - 0.48), self.robot_domain_size[0] - 0.02,
+                                          self.robot_domain_size[1] - 0.02, linewidth=3,
+                                          edgecolor=color, linestyle=linestyle,
+                                          facecolor='none')
                 self.img.axes.get_xaxis().set_visible(False)
                 self.img.axes.get_yaxis().set_visible(False)
                 ax.add_patch(rect1)
@@ -151,16 +168,16 @@ class Warehouse(object):
         Sets robots initial position at the begining of every episode
         """
         self.robots = []
-        domain_rows = np.arange(0, self.n_rows, self.robot_domain_size[0]-1)
-        domain_columns = np.arange(0, self.n_columns, self.robot_domain_size[1]-1)
+        domain_rows = np.arange(0, self.n_rows, self.robot_domain_size[0] - 1)
+        domain_columns = np.arange(0, self.n_columns, self.robot_domain_size[1] - 1)
         for i in range(self.n_robots_row):
             for j in range(self.n_robots_column):
                 robot_domain = [domain_rows[i], domain_columns[j],
-                                domain_rows[i+1], domain_columns[j+1]]
-                robot_position = [robot_domain[0] + self.robot_domain_size[0]//2,
-                                  robot_domain[1] + self.robot_domain_size[1]//2]
+                                domain_rows[i + 1], domain_columns[j + 1]]
+                robot_position = [robot_domain[0] + self.robot_domain_size[0] // 2,
+                                  robot_domain[1] + self.robot_domain_size[1] // 2]
                 self.robots.append(Robot(self.robot_id, robot_position,
-                                                  robot_domain))
+                                         robot_domain))
                 self.robot_id += 1
 
     def _add_items(self):
@@ -196,7 +213,6 @@ class Warehouse(object):
                     self.items.append(Item(self.item_id, loc))
                     self.item_id += 1
 
-
     def _get_state(self):
         """
         Generates a 3D bitmap: First layer shows the location of every item.
@@ -205,7 +221,7 @@ class Warehouse(object):
         state_bitmap = np.zeros([self.n_rows, self.n_columns, 2], dtype=np.int)
         for item in self.items:
             item_pos = item.get_position
-            state_bitmap[item_pos[0], item_pos[1], 0] = 1 #item.get_waiting_time
+            state_bitmap[item_pos[0], item_pos[1], 0] = 1  # item.get_waiting_time
         for robot in self.robots:
             robot_pos = robot.get_position
             state_bitmap[robot_pos[0], robot_pos[1], 1] = 1
@@ -224,7 +240,7 @@ class Warehouse(object):
         """
         All robots take an action in the environment.
         """
-        for action,robot in zip(actions, self.robots):
+        for action, robot in zip(actions, self.robots):
             robot.act(action)
 
     def _compute_reward(self, robot):
@@ -239,7 +255,6 @@ class Warehouse(object):
             if robot_pos[0] == item_pos[0] and robot_pos[1] == item_pos[1]:
                 reward += 1
         return reward
-
 
     def _remove_items(self):
         """

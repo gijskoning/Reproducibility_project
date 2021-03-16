@@ -16,6 +16,8 @@ from stable_baselines3.common.vec_env import (DummyVecEnv, SubprocVecEnv,
 from stable_baselines3.common.vec_env.vec_normalize import \
     VecNormalize as VecNormalize_
 
+from environments.warehouse.warehouse import Warehouse
+
 try:
     import dmc2gym
 except ImportError:
@@ -34,12 +36,15 @@ except ImportError:
 
 def make_env(env_id, seed, rank, log_dir, allow_early_resets):
     def _thunk():
-        if env_id.startswith("dm"):
-            _, domain, task = env_id.split('.')
-            env = dmc2gym.make(domain_name=domain, task_name=task)
-            env = ClipAction(env)
+        if env_id == "Warehouse":
+            env = Warehouse()
         else:
-            env = gym.make(env_id)
+            if env_id.startswith("dm"):
+                _, domain, task = env_id.split('.')
+                env = dmc2gym.make(domain_name=domain, task_name=task)
+                env = ClipAction(env)
+            else:
+                env = gym.make(env_id)
 
         is_atari = hasattr(gym.envs, 'atari') and isinstance(
             env.unwrapped, gym.envs.atari.atari_env.AtariEnv)
@@ -52,23 +57,24 @@ def make_env(env_id, seed, rank, log_dir, allow_early_resets):
         if str(env.__class__.__name__).find('TimeLimit') >= 0:
             env = TimeLimitMask(env)
 
-        if log_dir is not None:
-            env = Monitor(env,
-                          os.path.join(log_dir, str(rank)),
-                          allow_early_resets=allow_early_resets)
+        if env_id != "Warehouse":
+            if log_dir is not None:
+                env = Monitor(env,
+                              os.path.join(log_dir, str(rank)),
+                              allow_early_resets=allow_early_resets)
 
-        if is_atari:
-            if len(env.observation_space.shape) == 3:
-                env = EpisodicLifeEnv(env)
-                if "FIRE" in env.unwrapped.get_action_meanings():
-                    env = FireResetEnv(env)
-                env = WarpFrame(env, width=84, height=84)
-                env = ClipRewardEnv(env)
-        elif len(env.observation_space.shape) == 3:
-            raise NotImplementedError(
-                "CNN models work only for atari,\n"
-                "please use a custom wrapper for a custom pixel input env.\n"
-                "See wrap_deepmind for an example.")
+            if is_atari:
+                if len(env.observation_space.shape) == 3:
+                    env = EpisodicLifeEnv(env)
+                    if "FIRE" in env.unwrapped.get_action_meanings():
+                        env = FireResetEnv(env)
+                    env = WarpFrame(env, width=84, height=84)
+                    env = ClipRewardEnv(env)
+            elif len(env.observation_space.shape) == 3:
+                raise NotImplementedError(
+                    "CNN models work only for atari,\n"
+                    "please use a custom wrapper for a custom pixel input env.\n"
+                    "See wrap_deepmind for an example.")
 
         # If the input has shape (W,H,3), wrap for PyTorch convolutions
         obs_shape = env.observation_space.shape

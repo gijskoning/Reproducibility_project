@@ -5,8 +5,8 @@ import os
 import argparse
 
 def get_config_file():
-    dir = os.path.dirname(__file__)
-    config_file = os.path.join(dir, 'configs/warehourse_environment.yaml')
+    # todo currently choose FNN.yaml but can possible also choose other. - Gijs
+    config_file = os.path.join('configs/warehouse/FNN.yaml')
     # parser.add_argument('--config', default=config_file, help='config file')
     # args, _ = parser.parse_known_args()
     # config_file = args.config
