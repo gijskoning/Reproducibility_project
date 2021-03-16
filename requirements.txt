@@ -4,8 +4,9 @@ matplotlib
 torchsummary
 jupyterlab
 pylint
-baselines
-pybullet
+# It is advices to install baselines package by cloning the repo and running 'python setup.py install' such that Mujoco is not required.
+#baselines
 stable-baselines3
+pybullet
 networkx
 pyyaml>=5
