@@ -13,6 +13,17 @@ PongNoFrameskip-v4 (for quicker testing the num-processes is decreased from 8 to
 python main.py --env-name "PongNoFrameskip-v4" --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 0.5 --num-processes 1 --num-steps 128 --num-mini-batch 4 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01
 ```
 The Warehouse environment included in the code of the paper.
+*Todo the hyperparameter are not yet correct!*
+Currently these parameters are correct: 
+- learning rate, num epoch/num-steps, value coeff/value-loss-coef, entropy/entropy-coef, clip/clip-param, batch size/num-mini-batch.
+
+Missing are the discount value 0.99. GAE delta of 0.95. 
+Also not sure if value coeff is the same as value-loss-coef. Previously in the PPO algo it was set to 0.5 as default. The paper does 1.
+Next to that I am not sure if num workers is equal to num-steps. num-steps equal to 3 doesn't actually work for 8 workers.
 ```
-python main.py --env-name "Warehouse" --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 0.5 --num-processes 1 --num-steps 128 --num-mini-batch 4 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01
+python main.py --env-name "Warehouse" --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01
+```
+With recursion:
+```
+python main.py --env-name "Warehouse" --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01 --recurrent-policy
 ```
