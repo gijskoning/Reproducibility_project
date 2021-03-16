@@ -37,7 +37,7 @@ def create_IAM_model(envs, args):
         obs_shape=envs.observation_space.shape,
         action_space=envs.action_space,
         base=None,
-        base_kwargs={'recurrent': args.recurrent_policy})
+        base_kwargs={'recurrent': args.recurrent_policy, 'hidden_size': 640, 'second_hidden_size': 256})
     return actor_critic
 
 
@@ -48,8 +48,11 @@ def main():
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     if args.cuda and torch.cuda.is_available() and args.cuda_deterministic:
+        print("Cuda enabled")
         torch.backends.cudnn.benchmark = False
         torch.backends.cudnn.deterministic = True
+    else:
+        print("Cuda disabled")
 
     log_dir = os.path.expanduser(args.log_dir)
     eval_log_dir = log_dir + "_eval"

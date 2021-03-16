@@ -16,8 +16,9 @@ The Warehouse environment included in the code of the paper.
 *Todo the hyperparameter are not yet correct!*
 Currently these parameters are correct: 
 - learning rate, num epoch/num-steps, value coeff/value-loss-coef, entropy/entropy-coef, clip/clip-param, batch size/num-mini-batch.
+- The default of GAE delta is 0.95 and thus the same as in the paper.
+- The default for gamma/discount is 0.99 which is also the same as in the paper.
 
-Missing are the discount value 0.99. GAE delta of 0.95. 
 Also not sure if value coeff is the same as value-loss-coef. Previously in the PPO algo it was set to 0.5 as default. The paper does 1.
 Next to that I am not sure if num workers is equal to num-steps. num-steps equal to 3 doesn't actually work for 8 workers.
 ```

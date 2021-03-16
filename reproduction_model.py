@@ -25,6 +25,7 @@ class IAMPolicy(nn.Module):
             if len(obs_shape) == 3:
                 base = CNNBase
             elif len(obs_shape) == 1:
+                print("MLPBase")
                 base = MLPBase
             else:
                 raise NotImplementedError
@@ -203,8 +204,8 @@ class CNNBase(NNBase):
 
 
 class MLPBase(NNBase):
-    def __init__(self, num_inputs, recurrent=False, hidden_size=64):
-        super(MLPBase, self).__init__(recurrent, num_inputs, hidden_size)
+    def __init__(self, num_inputs, recurrent=False, hidden_size=64, second_hidden_size=64):
+        super(MLPBase, self).__init__(recurrent, num_inputs, second_hidden_size)
 
         if recurrent:
             num_inputs = hidden_size
@@ -214,13 +215,13 @@ class MLPBase(NNBase):
 
         self.actor = nn.Sequential(
             init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
-            init_(nn.Linear(hidden_size, hidden_size)), nn.Tanh())
+            init_(nn.Linear(hidden_size, second_hidden_size)), nn.Tanh())
 
         self.critic = nn.Sequential(
             init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
-            init_(nn.Linear(hidden_size, hidden_size)), nn.Tanh())
+            init_(nn.Linear(hidden_size, second_hidden_size)), nn.Tanh())
 
-        self.critic_linear = init_(nn.Linear(hidden_size, 1))
+        self.critic_linear = init_(nn.Linear(second_hidden_size, 1))
 
         self.train()
 
