@@ -28,3 +28,9 @@ With recursion:
 ```
 python main.py --env-name "Warehouse" --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01 --recurrent-policy
 ```
+
+## Additional installation instructions
+Preferably you use Pytorch with Cuda enabled but this requires a special version. To check your Cuda version (if installed) execute 
+this command in cmd.exe: `nvcc --version`  
+You can find the correct command of Pytorch with the specific Cuda version here: https://pytorch.org/  
+The command to be executed for Pip packages could look like this (only torch is needed): `pip install torch==1.8.0+cu111 -f https://download.pytorch.org/whl/torch_stable.html`

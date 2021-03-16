@@ -47,6 +47,7 @@ def main():
 
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
+    print("Cuda is available: ", torch.cuda.is_available())
     if args.cuda and torch.cuda.is_available() and args.cuda_deterministic:
         print("Cuda enabled")
         torch.backends.cudnn.benchmark = False
