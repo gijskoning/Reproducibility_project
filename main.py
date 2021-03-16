@@ -47,13 +47,16 @@ def main():
 
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
-    print("Cuda is available: ", torch.cuda.is_available())
+    print("CUDA is available: ", torch.cuda.is_available())
     if args.cuda and torch.cuda.is_available() and args.cuda_deterministic:
-        print("Cuda enabled")
+        print("CUDA enabled")
         torch.backends.cudnn.benchmark = False
         torch.backends.cudnn.deterministic = True
     else:
-        print("Cuda disabled")
+        if args.cuda_deterministic:
+            print("Warning CUDA is requested but is not available")
+        else:
+            print("CUDA disabled")
 
     log_dir = os.path.expanduser(args.log_dir)
     eval_log_dir = log_dir + "_eval"

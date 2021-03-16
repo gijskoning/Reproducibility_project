@@ -8,4 +8,4 @@ baselines
 pybullet
 stable-baselines3
 networkx
-pyyaml
+pyyaml>=5

@@ -1,0 +1,11 @@
+numpy
+torch
+matplotlib
+torchsummary
+pylint
+# It is advices to install baselines packages by cloning the repo and running 'python setup.py install' such that Mujoco is not required.
+baselines
+stable-baselines3
+pybullet
+networkx
+pyyaml>=5
