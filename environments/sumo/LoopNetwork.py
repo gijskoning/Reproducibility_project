@@ -4,7 +4,7 @@ import copy
 class LoopNetwork(SumoGymAdapter):
 
     __DEFAULT_PARAMETERS = {
-        'scene': 'loop_network_dumb',
+        'scene': 'loop_network',
         'box_bottom_corner': [9, 9], #[10, 12],
         'box_top_corner':  [68, 68], #[66, 68],
         'y_t': 6, # Yellow (traffic light) time
@@ -29,8 +29,12 @@ class LoopNetwork(SumoGymAdapter):
         'traffic_lights': False
     }
 
-    def __init__(self, parameters, seed):
+    def __init__(self, seed, parameters=None):
         _parameters = copy.deepcopy(self._DEFAULT_PARAMETERS) # load default parameters of SUMOGymAdapter
         _parameters.update(self.__DEFAULT_PARAMETERS) # load default parameters of GridSumoEnv
-        _parameters.update(parameters) # load parameters given by the user
+        if parameters is not None:
+            _parameters.update(parameters) # load parameters given by the user
         super().__init__(_parameters, seed)
+        # todo temp for gym adaptation
+        self.reward_range = 2
+        self.metadata = 2

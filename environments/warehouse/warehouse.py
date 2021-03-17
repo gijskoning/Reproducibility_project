@@ -42,9 +42,10 @@ class Warehouse(object):
         self.items = []
         self.img = None
 
-        # todo temp
-        self.reward_range = 2
+        # todo temp for gym adaptation
+        self.reward_range = 50
         self.metadata = 2
+        self.observation_minmax = np.zeros(2)
 
         # self.reset()
         self.max_waiting_time = 8
@@ -100,9 +101,29 @@ class Warehouse(object):
 
     @property
     def observation_space(self):
+        """
+        From the paper:
+        The observations are a combination
+        of the agent’s location (one-hot encoded vector) and the 24
+        item binary variables. In the experiments where d-sets are
+        manually selected, the RNN in IAM only receives the latter
+        variables while the FNN processes the entire vector.
+        """
         # todo need to fix observation space
-        # low and high are just guessed!
-        return spaces.Box(low=-10, high=10, shape=(584,))
+        # The observation space consists\
+        # PPO algorithm
+        # space = spaces.MultiBinary([self.parameters['num_frames']*(49+24)])
+        # todo not sure if agent and item space are in correct order here
+        # agent_position_space = spaces.Box(0, 1, (self.parameters['num_frames'] * (49),), dtype=int)
+        # item_space = spaces.Box(0, 9, (self.parameters['num_frames'] * (24),), dtype=int)
+        # return flatten_space(space)
+        # for _ in range(self.parameters['num_frames']):
+        # flatten = spaces.flatten_space(
+        #     spaces.Dict({'position_one_hot_vector': agent_position_space, 'item_space': item_space}))
+        # different way of creating the observation space
+        flatten = spaces.Box(0, 9, (self.parameters['num_frames'] * (49+24),), dtype=int)
+
+        return flatten
 
     @property
     def action_space(self):
@@ -221,7 +242,8 @@ class Warehouse(object):
         state_bitmap = np.zeros([self.n_rows, self.n_columns, 2], dtype=np.int)
         for item in self.items:
             item_pos = item.get_position
-            state_bitmap[item_pos[0], item_pos[1], 0] = 1  # item.get_waiting_time
+            # todo very strange should this actually be item.get_waiting_time?
+            state_bitmap[item_pos[0], item_pos[1], 0] = item.get_waiting_time
         for robot in self.robots:
             robot_pos = robot.get_position
             state_bitmap[robot_pos[0], robot_pos[1], 1] = 1
@@ -234,6 +256,10 @@ class Warehouse(object):
         """
         state = self._get_state()
         observation = self.robots[self.learning_robot_id].observe(state, self.obs_type)
+        # self.observation_minmax[0] = np.maximum(observation.max(), self.observation_minmax[1])
+        # self.observation_minmax[1] = np.minimum(observation.min(), self.observation_minmax[0])
+        # print("self.observation_minmax", self.observation_minmax)
+        # print("observation", observation)S
         return observation
 
     def _robots_act(self, actions):

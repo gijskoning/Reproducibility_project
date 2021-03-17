@@ -3,7 +3,9 @@ parameters:
     name: 'FNN_warehouse'
     env_type: 'warehouse'
     time_horizon: 8
+    # todo should actually be 32
     num_frames: 8
+    # This should also probably be multiplied by 4
     obs_size: 584
     # MAIN MODEL
     # Fully connected module

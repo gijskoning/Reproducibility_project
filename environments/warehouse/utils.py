@@ -4,19 +4,23 @@ import sys
 import os
 import argparse
 
+
 def get_config_file():
     # todo currently choose FNN.yaml but can possible also choose other. - Gijs
     config_file = os.path.join('configs/warehouse/FNN.yaml')
+    print("Currently using configfile: ", config_file)
     # parser.add_argument('--config', default=config_file, help='config file')
     # args, _ = parser.parse_known_args()
     # config_file = args.config
     return config_file
+
 
 def read_parameters(scope):
     config_file = get_config_file()
     with open(config_file) as file:
         parameters = yaml.load(file, Loader=yaml.FullLoader)
     return parameters[scope]
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser()

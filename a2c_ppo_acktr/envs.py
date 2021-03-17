@@ -16,6 +16,7 @@ from stable_baselines3.common.vec_env import (DummyVecEnv, SubprocVecEnv,
 from stable_baselines3.common.vec_env.vec_normalize import \
     VecNormalize as VecNormalize_
 
+from environments.sumo.LoopNetwork import LoopNetwork
 from environments.warehouse.warehouse import Warehouse
 
 try:
@@ -36,8 +37,13 @@ except ImportError:
 
 def make_env(env_id, seed, rank, log_dir, allow_early_resets):
     def _thunk():
+        print(f"Using {env_id} environment")
         if env_id == "Warehouse":
             env = Warehouse()
+        elif env_id == 'Sumo':
+            # todo currently just using loop_network scene
+            params = {'scene': "loop_network", 'libsumo':True}
+            env = LoopNetwork(seed, params)
         else:
             if env_id.startswith("dm"):
                 _, domain, task = env_id.split('.')
@@ -57,7 +63,7 @@ def make_env(env_id, seed, rank, log_dir, allow_early_resets):
         if str(env.__class__.__name__).find('TimeLimit') >= 0:
             env = TimeLimitMask(env)
 
-        if env_id != "Warehouse":
+        if env_id not in ["Warehouse", "Sumo"]:
             if log_dir is not None:
                 env = Monitor(env,
                               os.path.join(log_dir, str(rank)),
