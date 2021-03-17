@@ -9,3 +9,5 @@ stable-baselines3
 pybullet
 networkx
 pyyaml>=5
+sumolib
+traci
