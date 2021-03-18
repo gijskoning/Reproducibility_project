@@ -52,6 +52,8 @@ class Warehouse(object):
         self.total_steps = 0
         self.parameters = parameters
         self.reset()
+        self.rewards = 0
+        self.rewards_count = 0
         # self.seed(seed)
 
     ############################## Override ###############################
@@ -80,7 +82,12 @@ class Warehouse(object):
         self._robots_act([action])
         self._increase_item_waiting_time()
         reward = self._compute_reward(self.robots[self.learning_robot_id])
-        print(reward)
+        self.rewards_count += 1
+        self.rewards += reward
+        if(self.rewards_count==100):
+            print(self.rewards)
+            self.rewards_count = 0
+            self.rewards = 0
         self._remove_items()
         self._add_items()
         obs = self._get_observation()
