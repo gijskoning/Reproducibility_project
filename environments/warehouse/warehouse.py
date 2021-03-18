@@ -43,7 +43,7 @@ class Warehouse(object):
         self.img = None
 
         # todo temp for gym adaptation
-        self.reward_range = 50
+        self.reward_range = 10
         self.metadata = 2
         self.observation_minmax = np.zeros(2)
 
@@ -80,6 +80,7 @@ class Warehouse(object):
         self._robots_act([action])
         self._increase_item_waiting_time()
         reward = self._compute_reward(self.robots[self.learning_robot_id])
+        print(reward)
         self._remove_items()
         self._add_items()
         obs = self._get_observation()
@@ -121,7 +122,7 @@ class Warehouse(object):
         # flatten = spaces.flatten_space(
         #     spaces.Dict({'position_one_hot_vector': agent_position_space, 'item_space': item_space}))
         # different way of creating the observation space
-        flatten = spaces.Box(0, 9, (self.parameters['num_frames'] * (49+24),), dtype=int)
+        flatten = spaces.Box(0, 1, (self.parameters['num_frames'] * (49+24),), dtype=int)
 
         return flatten
 
@@ -173,7 +174,7 @@ class Warehouse(object):
         else:
             self.img.set_data(im)
         plt.pause(delay)
-        plt.draw()
+        plt.show()
 
     def close(self):
         pass

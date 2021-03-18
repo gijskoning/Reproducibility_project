@@ -26,7 +26,7 @@ parameters:
     episode: 0
     obs_type: 'vector'
     obs_size: 73
-    num_workers: 8
+    num_workers: 2
     beta: 1.0e-2
     epsilon: 0.1
     time_horizon: 128

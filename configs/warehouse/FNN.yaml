@@ -19,3 +19,4 @@ parameters:
 
     # INFLUENCE MODEL
     influence: false
+    num_workers: 2

@@ -25,7 +25,7 @@ def worker_process(remote: multiprocessing.connection.Connection, parameters,
                     allow_early_resets=False)
         env = wrap_deepmind(env, True)
     if parameters['env_type'] == 'warehouse':
-        env = Warehouse(seed, parameters)
+        env = Warehouse(parameters)
     if parameters['env_type'] == 'sumo':
         env = LoopNetwork(parameters, seed)
         

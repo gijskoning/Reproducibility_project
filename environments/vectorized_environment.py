@@ -12,6 +12,7 @@ class VectorizedEnvironment(object):
 
     def __init__(self, parameters, seed):
         print('cpu count', mp.cpu_count())
+        print("num workers: ", parameters['num_workers'])
         if parameters['num_workers'] < mp.cpu_count():
             self.num_workers = parameters['num_workers']
         else:

@@ -37,7 +37,7 @@ def create_IAM_model(envs, args):
         obs_shape=envs.observation_space.shape,
         action_space=envs.action_space,
         base=None,
-        base_kwargs={'recurrent': args.recurrent_policy, 'hidden_size': 640, 'second_hidden_size': 256})
+        base_kwargs={'recurrent': args.recurrent_policy, 'hidden_size': 64, 'second_hidden_size': 64})
     return actor_critic
 
 
@@ -83,6 +83,7 @@ def main():
             max_grad_norm=args.max_grad_norm)
     # This algorithm should be used for the reproduction project.
     elif args.algo == 'ppo':
+        print("PPO")
         agent = algo.PPO(
             actor_critic,
             args.clip_param,
