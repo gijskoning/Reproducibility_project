@@ -19,6 +19,7 @@ from a2c_ppo_acktr.model import Policy as PPOPolicy
 from a2c_ppo_acktr.storage import RolloutStorage
 from evaluation import evaluate
 from reproduction_model import IAMPolicy
+from plot_data import DataSaver
 
 
 def create_default_model(envs, args):
@@ -44,7 +45,8 @@ def create_IAM_model(envs, args):
 def main():
     args = get_args()
     assert args.algo == 'ppo'
-    saving("Starting new run: with args "+ args.__str__())
+    data_saver = DataSaver()
+    data_saver.append("Starting new run: with args "+ args.__str__())
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     print("CUDA is available: ", torch.cuda.is_available())
@@ -204,35 +206,28 @@ def main():
         if j % args.log_interval == 0 and len(episode_rewards) > 1:
             total_num_steps = (j + 1) * args.num_processes * args.num_steps
             end = time.time()
-            data = [j,
-                    total_num_steps,
-                    int(total_num_steps / (end - start)),
-                    len(episode_rewards), np.mean(episode_rewards),
-                    np.median(episode_rewards), np.min(episode_rewards),
-                    np.max(episode_rewards), dist_entropy, value_loss,
+            data = [j, # Updates
+                    total_num_steps, # timesteps
+                    int(total_num_steps / (end - start)), #FPS
+                    len(episode_rewards), # lenght of episodes
+                    np.mean(episode_rewards), # mean of rewards
+                    np.median(episode_rewards), # median of rewards
+                    np.min(episode_rewards), # min rewards
+                    np.max(episode_rewards), # max rewards
+                    dist_entropy,
+                    value_loss,
                     action_loss]
             output = ''.join([str(x) + ',' for x in data])
-            saving(output)
+            data_saver.append(output)
             print(
                 "Updates {}, num timesteps {}, FPS {} \n Last {} training episodes: mean/median reward {:.1f}/{:.1f}, min/max reward {:.1f}/{:.1f}\n"
-                    .format(j, total_num_steps,
-                            int(total_num_steps / (end - start)),
-                            len(episode_rewards), np.mean(episode_rewards),
-                            np.median(episode_rewards), np.min(episode_rewards),
-                            np.max(episode_rewards), dist_entropy, value_loss,
-                            action_loss))
+                    .format(*data))
 
         if (args.eval_interval is not None and len(episode_rewards) > 1
                 and j % args.eval_interval == 0):
             obs_rms = utils.get_vec_normalize(envs).obs_rms
             evaluate(actor_critic, obs_rms, args.env_name, args.seed,
                      args.num_processes, eval_log_dir, device)
-
-
-def saving(output):
-    file = os.open("data/output.txt", os.O_APPEND|os.O_RDWR|os.O_CREAT)
-    os.write(file, str.encode(output + '\n'))
-    os.close(file)
 
 
 if __name__ == "__main__":
