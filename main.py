@@ -44,7 +44,7 @@ def create_IAM_model(envs, args):
 def main():
     args = get_args()
     assert args.algo == 'ppo'
-
+    saving("Starting new run: with args "+ args.__str__())
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     print("CUDA is available: ", torch.cuda.is_available())
@@ -204,6 +204,15 @@ def main():
         if j % args.log_interval == 0 and len(episode_rewards) > 1:
             total_num_steps = (j + 1) * args.num_processes * args.num_steps
             end = time.time()
+            data = [j,
+                    total_num_steps,
+                    int(total_num_steps / (end - start)),
+                    len(episode_rewards), np.mean(episode_rewards),
+                    np.median(episode_rewards), np.min(episode_rewards),
+                    np.max(episode_rewards), dist_entropy, value_loss,
+                    action_loss]
+            output = ''.join([str(x) + ',' for x in data])
+            saving(output)
             print(
                 "Updates {}, num timesteps {}, FPS {} \n Last {} training episodes: mean/median reward {:.1f}/{:.1f}, min/max reward {:.1f}/{:.1f}\n"
                     .format(j, total_num_steps,
@@ -218,6 +227,12 @@ def main():
             obs_rms = utils.get_vec_normalize(envs).obs_rms
             evaluate(actor_critic, obs_rms, args.env_name, args.seed,
                      args.num_processes, eval_log_dir, device)
+
+
+def saving(output):
+    file = os.open("data/output.txt", os.O_APPEND|os.O_RDWR|os.O_CREAT)
+    os.write(file, str.encode(output + '\n'))
+    os.close(file)
 
 
 if __name__ == "__main__":
