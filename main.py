@@ -3,6 +3,7 @@ import glob
 import os
 import time
 from collections import deque
+from datetime import datetime
 
 import gym
 import numpy as np
@@ -17,6 +18,7 @@ from a2c_ppo_acktr.arguments import get_args
 from a2c_ppo_acktr.envs import make_vec_envs
 from a2c_ppo_acktr.model import Policy as PPOPolicy
 from a2c_ppo_acktr.storage import RolloutStorage
+from environments.warehouse.utils import read_parameters
 from evaluation import evaluate
 from reproduction_model import IAMPolicy
 from plot_data import DataSaver
@@ -43,9 +45,10 @@ def create_IAM_model(envs, args):
 
 
 def main():
+    start_time_str = datetime.now().strftime("%m-%d-%Y-%H-%M-%S")
     args = get_args()
     assert args.algo == 'ppo'
-    data_saver = DataSaver()
+    data_saver = DataSaver(start_time_str)
     data_saver.append("Starting new run: with args "+ args.__str__())
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
@@ -67,8 +70,10 @@ def main():
 
     torch.set_num_threads(1)
     device = torch.device("cuda:0" if args.cuda else "cpu")
-
-    envs = make_vec_envs(args.env_name, args.seed, args.num_processes,
+    parameters = None
+    if args.env_name == "Warehouse":
+        parameters = read_parameters('parameters', 'warehouse/' + args.yaml_file)
+    envs = make_vec_envs(args.env_name, parameters, args.seed, args.num_processes,
                          args.gamma, args.log_dir, device, False)
 
     # actor_critic = create_default_model(envs, args)
@@ -201,7 +206,7 @@ def main():
             torch.save([
                 actor_critic,
                 getattr(utils.get_vec_normalize(envs), 'obs_rms', None)
-            ], os.path.join(save_path, args.env_name + ".pt"))
+            ], os.path.join(save_path, args.env_name + "_" + start_time_str +".pt"))
 
         if j % args.log_interval == 0 and len(episode_rewards) > 1:
             total_num_steps = (j + 1) * args.num_processes * args.num_steps

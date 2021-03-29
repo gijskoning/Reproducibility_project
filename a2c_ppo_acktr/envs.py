@@ -35,11 +35,11 @@ except ImportError:
     pass
 
 
-def make_env(env_id, seed, rank, log_dir, allow_early_resets):
+def make_env(env_id, parameters, seed, rank, log_dir, allow_early_resets):
     def _thunk():
         print(f"Using {env_id} environment")
         if env_id == "Warehouse":
-            env = Warehouse()
+            env = Warehouse(parameters)
         elif env_id == 'Sumo':
             # todo currently just using loop_network scene
             params = {'scene': "loop_network", 'libsumo':True}
@@ -93,6 +93,7 @@ def make_env(env_id, seed, rank, log_dir, allow_early_resets):
 
 
 def make_vec_envs(env_name,
+                  parameters,
                   seed,
                   num_processes,
                   gamma,
@@ -101,7 +102,7 @@ def make_vec_envs(env_name,
                   allow_early_resets,
                   num_frame_stack=None):
     envs = [
-        make_env(env_name, seed, i, log_dir, allow_early_resets)
+        make_env(env_name, parameters, seed, i, log_dir, allow_early_resets)
         for i in range(num_processes)
     ]
 

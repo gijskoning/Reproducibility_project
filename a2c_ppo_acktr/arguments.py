@@ -149,6 +149,10 @@ def get_args():
         action='store_true',
         default=False,
         help='use a linear schedule on the learning rate')
+    parser.add_argument(
+        '--yaml-file',
+        default='FNN',
+        help='specify the name of the yaml config file found in configs/{env_name}/{yaml_file_name}.yaml')
     args = parser.parse_args()
 
     args.cuda = not args.no_cuda and torch.cuda.is_available()

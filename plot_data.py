@@ -7,14 +7,26 @@ from matplotlib import pyplot as plt
 
 class DataSaver(object):
 
-    def __init__(self):
-        self.file = "data/output" + datetime.now().strftime("%m-%d-%Y-%H-%M-%S") + ".txt"
-        open(self.file, 'w')
+    def __init__(self, start_time_str=datetime.now().strftime("%m-%d-%Y-%H-%M-%S")):
+        self.file = "data/output" + start_time_str + ".txt"
+        # open(self.file, 'w')
+        self._count = 0
+        self.minimal_line_count = 5
+        self.to_be_appended_lines = []
 
     def append(self, line):
-        file = os.open(self.file, os.O_APPEND | os.O_RDWR | os.O_CREAT)
-        os.write(file, str.encode(line + '\n'))
-        os.close(file)
+        self.to_be_appended_lines.append(line)
+        self._count += 1
+        # Only create and write to file when
+        if self._count > self.minimal_line_count:
+            print("count")
+            file = os.open(self.file, os.O_APPEND | os.O_RDWR | os.O_CREAT)
+            for l in self.to_be_appended_lines:
+                print("write")
+                os.write(file, str.encode(l + '\n'))
+            os.close(file)
+            self.to_be_appended_lines = []
+
 
 
 def create_average_reward_list(x_list, y_list, step_size):

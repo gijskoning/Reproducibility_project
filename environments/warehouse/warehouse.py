@@ -22,10 +22,7 @@ class Warehouse(object):
                2: 'LEFT',
                3: 'RIGHT'}
 
-    def __init__(self, parameters=None):
-        if parameters is None:
-            parameters = read_parameters('parameters')
-        # parameters = parse_arguments()
+    def __init__(self, parameters):
         self.n_columns = 7
         self.n_rows = 7
         self.n_robots_row = 1
@@ -43,7 +40,7 @@ class Warehouse(object):
         self.img = None
 
         # todo temp for gym adaptation
-        self.reward_range = 50
+        self.reward_range = 1
         self.metadata = 2
         self.observation_minmax = np.zeros(2)
 
