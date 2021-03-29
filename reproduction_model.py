@@ -261,16 +261,16 @@ class IAMBase(MLPBase):
                 init_(nn.Linear(hidden_size, second_hidden_size)), nn.Tanh())
 
         recurrent_input_size = num_inputs
-
+        self.rnn_hidden_size = 128
         self.actor = create_base()
-        self.actor_rnn = self._create_gru(recurrent_input_size, 128)
+        self.actor_rnn = self._create_gru(recurrent_input_size, self.rnn_hidden_size)
         # self.actor_linear_combine_rnn = init_(nn.Linear(second_hidden_size, 1))
 
         self.critic = create_base()
-        self.critic_rnn = self._create_gru(recurrent_input_size, 128)
+        self.critic_rnn = self._create_gru(recurrent_input_size, self.rnn_hidden_size)
         # self.critic_linear_combine_rnn = init_(nn.Linear(second_hidden_size, 1))
 
-        self.critic_linear = init_(nn.Linear(second_hidden_size, 1))
+        self.critic_linear = init_(nn.Linear(second_hidden_size+self.rnn_hidden_size, 1))
 
         self.train()
 
@@ -279,12 +279,21 @@ class IAMBase(MLPBase):
 
         hidden_critic = self.critic(x)
         hidden_actor = self.actor(x)
+        # Split the rnn_hxs in two. This is just a hack to get two GRU's at the same time with the ppo algo!
+        left_rnn_hxs = rnn_hxs[:, :self._recurrent_hidden_size]
+        right_rnn_hxs = rnn_hxs[:, self._recurrent_hidden_size:]
 
-        critic_x, rnn_hxs[0, :self._recurrent_hidden_size] = self._forward_gru(x, rnn_hxs[0, :self._recurrent_hidden_size], masks, self.actor_rnn)
-        actor_x, rnn_hxs[0, self._recurrent_hidden_size:] = self._forward_gru(x, rnn_hxs[0, self._recurrent_hidden_size:], masks, self.critic_rnn)
+        critic_x, left_rnn_hxs = \
+            self._forward_gru(x, left_rnn_hxs, masks, self.actor_rnn)
+
+        actor_x, right_rnn_hxs = \
+            self._forward_gru(x, right_rnn_hxs, masks, self.critic_rnn)
 
         hidden_critic = torch.cat([hidden_critic, critic_x], 1)
         hidden_actor = torch.cat([hidden_actor, actor_x], 1)
+
+        rnn_hxs[:, :self._recurrent_hidden_size] = left_rnn_hxs
+        rnn_hxs[:, self._recurrent_hidden_size:] = right_rnn_hxs
 
         return self.critic_linear(hidden_critic), hidden_actor, rnn_hxs
 
@@ -292,4 +301,8 @@ class IAMBase(MLPBase):
     def recurrent_hidden_state_size(self):
         # Changed this! Before it was self._hidden_size
         # Do this hack multiplying by such that one half is used by the critic network and the other by the actor.
-        return self._recurrent_hidden_size* 2
+        return self._recurrent_hidden_size * 2
+
+    @property
+    def output_size(self):
+        return self._hidden_size+self.rnn_hidden_size

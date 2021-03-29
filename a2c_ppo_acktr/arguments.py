@@ -3,8 +3,9 @@ import argparse
 import torch
 
 
-def get_args():
+def get_args(optional_args=None):
     parser = argparse.ArgumentParser(description='RL')
+    parser.parse_args(optional_args)
     parser.add_argument(
         '--algo', default='a2c', help='algorithm to use: a2c | ppo | acktr')
     parser.add_argument(

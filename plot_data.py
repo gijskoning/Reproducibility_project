@@ -13,6 +13,7 @@ class DataSaver(object):
         self._count = 0
         self.minimal_line_count = 5
         self.to_be_appended_lines = []
+        print("Log file: ", self.file)
 
     def append(self, line):
         self.to_be_appended_lines.append(line)
@@ -34,7 +35,6 @@ def create_average_reward_list(x_list, y_list, step_size):
     # create average points over
     for i in range(len(x_list)):
         count += 1
-        print(count)
         sum_bin += y_list[i]
         if x_list[i] > current_step_bin:
             current_step_bin += step_size
@@ -60,7 +60,7 @@ def main():
         # Rewards
         y.append(float(line_data[4]))
 
-    average_over_steps = 5000
+    average_over_steps = 10000
 
     plt.plot(x, y)
     plt.xlabel("timesteps")
