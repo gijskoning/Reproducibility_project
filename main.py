@@ -140,7 +140,7 @@ def main():
     rollouts.obs[0].copy_(obs)
     rollouts.to(device)
 
-    episode_rewards = deque(maxlen=args.save_interval)
+    episode_rewards = deque(maxlen=args.log_interval)
 
     start = time.time()
     num_updates = int(
