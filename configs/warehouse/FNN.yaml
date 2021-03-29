@@ -2,20 +2,14 @@ parameters:
     # Common hyperparameters
     name: 'FNN_warehouse'
     env_type: 'warehouse'
-    time_horizon: 8
-    # todo should actually be 32
-    num_frames: 8
-    # This should also probably be multiplied by 4
-    obs_size: 584
+    num_frames: 32
     # MAIN MODEL
-    # Fully connected module
-    fully_connected: true
-    num_fc_layers: 2
+    num_fc_layers: 2 # param not used
     num_fc_units: [640, 256]
     # Convolutional module
-    convolutional: false
+    convolutional: false # param not used
     # Recurrent module
-    recurrent: false
+    recurrent: false # param not used
 
     # INFLUENCE MODEL
-    influence: false
+    influence: false # param not used

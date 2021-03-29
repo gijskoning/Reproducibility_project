@@ -34,13 +34,14 @@ def create_default_model(envs, args):
     return actor_critic
 
 
-def create_IAM_model(envs, args):
+def create_IAM_model(envs, args, parameters):
     #  Here is the model created! And we should change only this part.
     actor_critic = IAMPolicy(
         obs_shape=envs.observation_space.shape,
         action_space=envs.action_space,
         base=None,
-        base_kwargs={'recurrent': args.recurrent_policy, 'hidden_size': 640, 'second_hidden_size': 256})
+        base_kwargs={'recurrent': args.recurrent_policy, 'hidden_size': parameters['num_fc_units'][0],
+                     'second_hidden_size': parameters['num_fc_units'][1]})
     return actor_critic
 
 
@@ -48,8 +49,19 @@ def main():
     start_time_str = datetime.now().strftime("%m-%d-%Y-%H-%M-%S")
     args = get_args()
     assert args.algo == 'ppo'
+
+    config_parameters = ""
+    if args.env_name == "Warehouse":
+        config_parameters = read_parameters('parameters', 'warehouse/' + args.yaml_file)
+
     data_saver = DataSaver(start_time_str)
-    data_saver.append("Starting new run: with args "+ args.__str__())
+    line = "Starting new run: with args " + args.__str__()
+    data_saver.append(line)
+    print(line)
+    line = "And parameters: " + config_parameters.__str__()
+    data_saver.append(line)
+    print(line)
+
     torch.manual_seed(args.seed)
     torch.cuda.manual_seed_all(args.seed)
     print("CUDA is available: ", torch.cuda.is_available())
@@ -70,14 +82,12 @@ def main():
 
     torch.set_num_threads(1)
     device = torch.device("cuda:0" if args.cuda else "cpu")
-    parameters = None
-    if args.env_name == "Warehouse":
-        parameters = read_parameters('parameters', 'warehouse/' + args.yaml_file)
-    envs = make_vec_envs(args.env_name, parameters, args.seed, args.num_processes,
+
+    envs = make_vec_envs(args.env_name, config_parameters, args.seed, args.num_processes,
                          args.gamma, args.log_dir, device, False)
 
     # actor_critic = create_default_model(envs, args)
-    actor_critic = create_IAM_model(envs, args)
+    actor_critic = create_IAM_model(envs, args, config_parameters)
     actor_critic.to(device)
     if args.algo == 'a2c':
         agent = algo.A2C_ACKTR(
@@ -130,7 +140,7 @@ def main():
     rollouts.obs[0].copy_(obs)
     rollouts.to(device)
 
-    episode_rewards = deque(maxlen=10)
+    episode_rewards = deque(maxlen=args.save_interval)
 
     start = time.time()
     num_updates = int(
@@ -206,19 +216,19 @@ def main():
             torch.save([
                 actor_critic,
                 getattr(utils.get_vec_normalize(envs), 'obs_rms', None)
-            ], os.path.join(save_path, args.env_name + "_" + start_time_str +".pt"))
+            ], os.path.join(save_path, args.env_name + "_" + start_time_str + ".pt"))
 
         if j % args.log_interval == 0 and len(episode_rewards) > 1:
             total_num_steps = (j + 1) * args.num_processes * args.num_steps
             end = time.time()
-            data = [j, # Updates
-                    total_num_steps, # timesteps
-                    int(total_num_steps / (end - start)), #FPS
-                    len(episode_rewards), # lenght of episodes
-                    np.mean(episode_rewards), # mean of rewards
-                    np.median(episode_rewards), # median of rewards
-                    np.min(episode_rewards), # min rewards
-                    np.max(episode_rewards), # max rewards
+            data = [j,  # Updates
+                    total_num_steps,  # timesteps
+                    int(total_num_steps / (end - start)),  # FPS
+                    len(episode_rewards),  # Only useful for print statement
+                    np.mean(episode_rewards),  # mean of rewards
+                    np.median(episode_rewards),  # median of rewards
+                    np.min(episode_rewards),  # min rewards
+                    np.max(episode_rewards),  # max rewards
                     dist_entropy,
                     value_loss,
                     action_loss]

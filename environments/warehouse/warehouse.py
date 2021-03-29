@@ -64,7 +64,7 @@ class Warehouse(object):
         self._add_items()
         obs = self._get_observation()
         if self.parameters['num_frames'] > 1:
-            self.prev_obs = np.zeros(self.parameters['obs_size'] - len(obs))
+            self.prev_obs = np.zeros(self._get_obs_size() - len(obs))
             obs = np.append(obs, self.prev_obs)
             self.prev_obs = np.copy(obs)
         self.episode_length = 0
@@ -95,6 +95,9 @@ class Warehouse(object):
         # Todo not sure if r should be equal to reward
         infos = {'episode': {'r': reward}}
         return obs, reward, done, infos
+
+    def _get_obs_size(self):
+        return self.observation_space.shape[0]
 
     @property
     def observation_space(self):

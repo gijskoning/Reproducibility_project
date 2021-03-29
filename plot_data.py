@@ -19,14 +19,11 @@ class DataSaver(object):
         self._count += 1
         # Only create and write to file when
         if self._count > self.minimal_line_count:
-            print("count")
             file = os.open(self.file, os.O_APPEND | os.O_RDWR | os.O_CREAT)
             for l in self.to_be_appended_lines:
-                print("write")
                 os.write(file, str.encode(l + '\n'))
             os.close(file)
             self.to_be_appended_lines = []
-
 
 
 def create_average_reward_list(x_list, y_list, step_size):
@@ -52,7 +49,8 @@ def main():
     latest_file = max(list_of_files, key=os.path.getctime)
 
     file = open(latest_file, 'r')  # use latest file or specify own file
-    file.readline()  # skip first line with run info
+    file.readline()  # skip first two lines with run info
+    file.readline()
     x = []
     y = []
     for line in file:
