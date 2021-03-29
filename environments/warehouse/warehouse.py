@@ -121,7 +121,7 @@ class Warehouse(object):
         # flatten = spaces.flatten_space(
         #     spaces.Dict({'position_one_hot_vector': agent_position_space, 'item_space': item_space}))
         # different way of creating the observation space
-        flatten = spaces.Box(0, 9, (self.parameters['num_frames'] * (49+24),), dtype=int)
+        flatten = spaces.Box(0, 1, (self.parameters['num_frames'] * (49+24),), dtype=int)
 
         return flatten
 
