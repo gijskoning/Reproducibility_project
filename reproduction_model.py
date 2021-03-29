@@ -25,7 +25,6 @@ class IAMPolicy(nn.Module):
             if len(obs_shape) == 3:
                 base = CNNBase
             elif len(obs_shape) == 1:
-                print("MLPBase")
                 base = MLPBase
             else:
                 raise NotImplementedError
@@ -88,19 +87,24 @@ class IAMPolicy(nn.Module):
 
 
 class NNBase(nn.Module):
-    def __init__(self, recurrent, recurrent_input_size, hidden_size):
+    def __init__(self, recurrent, recurrent_input_size, hidden_size, recurrent_hidden_size=128):
         super(NNBase, self).__init__()
 
         self._hidden_size = hidden_size
         self._recurrent = recurrent
+        self._recurrent_hidden_size = recurrent_hidden_size
 
         if recurrent:
-            self.gru = nn.GRU(recurrent_input_size, hidden_size)
-            for name, param in self.gru.named_parameters():
-                if 'bias' in name:
-                    nn.init.constant_(param, 0)
-                elif 'weight' in name:
-                    nn.init.orthogonal_(param)
+            self.gru = self._create_gru(recurrent_input_size, recurrent_hidden_size)
+
+    def _create_gru(self, recurrent_input_size, recurrent_hidden_size):
+        gru = nn.GRU(recurrent_input_size, recurrent_hidden_size)
+        for name, param in gru.named_parameters():
+            if 'bias' in name:
+                nn.init.constant_(param, 0)
+            elif 'weight' in name:
+                nn.init.orthogonal_(param)
+        return gru
 
     @property
     def is_recurrent(self):
@@ -109,16 +113,21 @@ class NNBase(nn.Module):
     @property
     def recurrent_hidden_state_size(self):
         if self._recurrent:
-            return self._hidden_size
+            # Changed this! Before it was self._hidden_size
+            return self._recurrent_hidden_size
         return 1
 
     @property
     def output_size(self):
         return self._hidden_size
 
-    def _forward_gru(self, x, hxs, masks):
+    def _forward_gru(self, x, hxs, masks, gru=None):
+        if gru is None:
+            # Not used in the IAM model
+            gru = self.gru
+
         if x.size(0) == hxs.size(0):
-            x, hxs = self.gru(x.unsqueeze(0), (hxs * masks).unsqueeze(0))
+            x, hxs = gru(x.unsqueeze(0), (hxs * masks).unsqueeze(0))
             x = x.squeeze(0)
             hxs = hxs.squeeze(0)
         else:
@@ -135,10 +144,10 @@ class NNBase(nn.Module):
             # Let's figure out which steps in the sequence have a zero for any agent
             # We will always assume t=0 has a zero in it as that makes the logic cleaner
             has_zeros = ((masks[1:] == 0.0) \
-                            .any(dim=-1)
-                            .nonzero()
-                            .squeeze()
-                            .cpu())
+                         .any(dim=-1)
+                         .nonzero()
+                         .squeeze()
+                         .cpu())
 
             # +1 to correct the masks[1:]
             if has_zeros.dim() == 0:
@@ -158,7 +167,7 @@ class NNBase(nn.Module):
                 start_idx = has_zeros[i]
                 end_idx = has_zeros[i + 1]
 
-                rnn_scores, hxs = self.gru(
+                rnn_scores, hxs = gru(
                     x[start_idx:end_idx],
                     hxs * masks[start_idx].view(1, -1, 1))
 
@@ -213,13 +222,14 @@ class MLPBase(NNBase):
         init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.
                                constant_(x, 0), np.sqrt(2))
 
-        self.actor = nn.Sequential(
-            init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
-            init_(nn.Linear(hidden_size, second_hidden_size)), nn.Tanh())
+        def create_base():
+            return nn.Sequential(
+                init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
+                init_(nn.Linear(hidden_size, second_hidden_size)), nn.Tanh())
 
-        self.critic = nn.Sequential(
-            init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
-            init_(nn.Linear(hidden_size, second_hidden_size)), nn.Tanh())
+        self.actor = create_base()
+
+        self.critic = create_base()
 
         self.critic_linear = init_(nn.Linear(second_hidden_size, 1))
 
@@ -235,3 +245,51 @@ class MLPBase(NNBase):
         hidden_actor = self.actor(x)
 
         return self.critic_linear(hidden_critic), hidden_actor, rnn_hxs
+
+
+class IAMBase(MLPBase):
+    def __init__(self, num_inputs, recurrent, hidden_size, second_hidden_size):
+        super(IAMBase, self).__init__(num_inputs, recurrent, hidden_size, second_hidden_size)
+        assert recurrent
+
+        init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.
+                               constant_(x, 0), np.sqrt(2))
+
+        def create_base():
+            return nn.Sequential(
+                init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
+                init_(nn.Linear(hidden_size, second_hidden_size)), nn.Tanh())
+
+        recurrent_input_size = num_inputs
+
+        self.actor = create_base()
+        self.actor_rnn = self._create_gru(recurrent_input_size, 128)
+        # self.actor_linear_combine_rnn = init_(nn.Linear(second_hidden_size, 1))
+
+        self.critic = create_base()
+        self.critic_rnn = self._create_gru(recurrent_input_size, 128)
+        # self.critic_linear_combine_rnn = init_(nn.Linear(second_hidden_size, 1))
+
+        self.critic_linear = init_(nn.Linear(second_hidden_size, 1))
+
+        self.train()
+
+    def forward(self, inputs, rnn_hxs, masks):
+        x = inputs
+
+        hidden_critic = self.critic(x)
+        hidden_actor = self.actor(x)
+
+        critic_x, rnn_hxs[0, :self._recurrent_hidden_size] = self._forward_gru(x, rnn_hxs[0, :self._recurrent_hidden_size], masks, self.actor_rnn)
+        actor_x, rnn_hxs[0, self._recurrent_hidden_size:] = self._forward_gru(x, rnn_hxs[0, self._recurrent_hidden_size:], masks, self.critic_rnn)
+
+        hidden_critic = torch.cat([hidden_critic, critic_x], 1)
+        hidden_actor = torch.cat([hidden_actor, actor_x], 1)
+
+        return self.critic_linear(hidden_critic), hidden_actor, rnn_hxs
+
+    @property
+    def recurrent_hidden_state_size(self):
+        # Changed this! Before it was self._hidden_size
+        # Do this hack multiplying by such that one half is used by the critic network and the other by the actor.
+        return self._recurrent_hidden_size* 2

@@ -20,7 +20,7 @@ from a2c_ppo_acktr.model import Policy as PPOPolicy
 from a2c_ppo_acktr.storage import RolloutStorage
 from environments.warehouse.utils import read_parameters
 from evaluation import evaluate
-from reproduction_model import IAMPolicy
+from reproduction_model import IAMPolicy, MLPBase, IAMBase
 from plot_data import DataSaver
 
 
@@ -36,10 +36,13 @@ def create_default_model(envs, args):
 
 def create_IAM_model(envs, args, parameters):
     #  Here is the model created! And we should change only this part.
+    base = MLPBase
+    if parameters['influence']:
+        base = IAMBase
     actor_critic = IAMPolicy(
         obs_shape=envs.observation_space.shape,
         action_space=envs.action_space,
-        base=None,
+        base=base,
         base_kwargs={'recurrent': args.recurrent_policy, 'hidden_size': parameters['num_fc_units'][0],
                      'second_hidden_size': parameters['num_fc_units'][1]})
     return actor_critic
