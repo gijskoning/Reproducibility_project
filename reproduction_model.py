@@ -261,16 +261,19 @@ class MLPBase(NNBase):
 
 
 class IAMBase(MLPBase):
-    def __init__(self, num_inputs, recurrent, hidden_sizes, recurrent_input_size=None, recurrent_hidden_size=128):
+    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_input_size=None, recurrent_hidden_size=128):
         super(IAMBase, self).__init__(num_inputs, recurrent, hidden_sizes, recurrent_hidden_size)
         assert recurrent
+        print(rnn_input_size)
+        if rnn_input_size is None:
+            rnn_input_size = num_inputs
 
-        if recurrent_input_size is None:
-            recurrent_input_size = num_inputs
+        init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.constant_(x, 0), np.sqrt(2))
+        self.static_A_matrix = init_(nn.Linear(num_inputs, rnn_input_size))
 
-        self.actor_rnn = self._create_gru(recurrent_input_size, self._recurrent_hidden_size)
+        self.actor_rnn = self._create_gru(rnn_input_size, self._recurrent_hidden_size)
 
-        self.critic_rnn = self._create_gru(recurrent_input_size, self._recurrent_hidden_size)
+        self.critic_rnn = self._create_gru(rnn_input_size, self._recurrent_hidden_size)
 
         init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.
                                constant_(x, 0), np.sqrt(2))
@@ -278,8 +281,9 @@ class IAMBase(MLPBase):
 
         self.train()
 
-    def forward(self, inputs, rnn_hxs, masks):
-        fnn_input, rnn_input = inputs
+    def forward(self, input, rnn_hxs, masks):
+        fnn_input = input
+        rnn_input = self.static_A_matrix(input)
 
         hidden_critic = self.critic_fnn(fnn_input)
         hidden_actor = self.actor_fnn(fnn_input)
@@ -312,12 +316,12 @@ class IAMBase(MLPBase):
 
 class IAMBaseCNN(IAMBase):
 
-    def __init__(self, num_inputs, recurrent, hidden_sizes):
+    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_input_size):
         final_hidden_size = 64
         final_hidden_size_flattened = final_hidden_size * 7 * 7
         # to much hacking here
         super(IAMBaseCNN, self).__init__(final_hidden_size_flattened, recurrent, hidden_sizes,
-                                         recurrent_input_size=hidden_sizes[0],
+                                         rnn_input_size=rnn_input_size,
                                          recurrent_hidden_size=256)
 
         init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.constant_(x, 0),
@@ -328,17 +332,12 @@ class IAMBaseCNN(IAMBase):
             init_(nn.Conv2d(32, 64, (4, 4), stride=(2, 2))), nn.ReLU(),
             init_(nn.Conv2d(64, final_hidden_size, (3, 3), stride=(1, 1))), nn.ReLU(), Flatten())
 
-        init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.constant_(x, 0), np.sqrt(2))
-        self.static_A_matrix = init_(nn.Linear(final_hidden_size_flattened, hidden_sizes[0]))
-
-    def forward(self, inputs, rnn_hxs, masks):
+    def forward(self, input, rnn_hxs, masks):
         """
         This method preprocesses the input with a CNN. Then filters the input with the static A matrix (Linear layer).
         The processed input with the static_d_set output is passed forward to the regular IAMModel where the FNN and RNN are.
         """
-        processed_input = self.cnn_preprocessor(inputs)
+        processed_input = self.cnn_preprocessor(input)
 
-        static_d_set_output = self.static_A_matrix(processed_input)
-
-        return super(IAMBaseCNN, self).forward((processed_input, static_d_set_output), rnn_hxs, masks)
+        return super(IAMBaseCNN, self).forward(processed_input, rnn_hxs, masks)
 

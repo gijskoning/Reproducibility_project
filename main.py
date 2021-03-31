@@ -40,7 +40,8 @@ def create_IAM_model(envs, args, parameters):
         obs_shape=envs.observation_space.shape,
         action_space=envs.action_space,
         IAM=parameters['influence'],
-        base_kwargs={'recurrent': args.recurrent_policy, 'hidden_sizes': parameters['num_fc_units']})
+        base_kwargs={'recurrent': args.recurrent_policy, 'hidden_sizes': parameters['num_fc_units'],
+                     'rnn_input_size': parameters['inf_num_rec_units']})
     return actor_critic
 
 
