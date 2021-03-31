@@ -270,7 +270,7 @@ class IAMBase(MLPBase):
         self.critic_rnn = self._create_gru(recurrent_input_size, self.rnn_hidden_size)
         # self.critic_linear_combine_rnn = init_(nn.Linear(second_hidden_size, 1))
 
-        self.critic_linear = init_(nn.Linear(second_hidden_size+self.rnn_hidden_size, 1))
+        self.critic_linear = init_(nn.Linear(second_hidden_size + self.rnn_hidden_size, 1))
 
         self.train()
 
@@ -305,4 +305,4 @@ class IAMBase(MLPBase):
 
     @property
     def output_size(self):
-        return self._hidden_size+self.rnn_hidden_size
+        return self._hidden_size + self.rnn_hidden_size
