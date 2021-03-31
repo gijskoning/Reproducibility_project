@@ -332,10 +332,13 @@ class IAMBaseCNN(IAMBase):
         self.static_A_matrix = init_(nn.Linear(final_hidden_size_flattened, hidden_sizes[0]))
 
     def forward(self, inputs, rnn_hxs, masks):
-        inputs = (inputs, inputs.clone())
-        x = self.cnn_preprocessor(inputs[0])
+        """
+        This method preprocesses the input with a CNN. Then filters the input with the static A matrix (Linear layer).
+        The processed input with the static_d_set output is passed forward to the regular IAMModel where the FNN and RNN are.
+        """
+        processed_input = self.cnn_preprocessor(inputs)
 
-        static_d_set = self.static_A_matrix(x)
+        static_d_set_output = self.static_A_matrix(processed_input)
 
-        return super(IAMBaseCNN, self).forward((x, static_d_set), rnn_hxs, masks)
+        return super(IAMBaseCNN, self).forward((processed_input, static_d_set_output), rnn_hxs, masks)
 
