@@ -225,7 +225,7 @@ class CNNBase(NNBase):
 
 class MLPBase(NNBase):
     def __init__(self, num_inputs, recurrent=False, hidden_sizes=(64, 64), recurrent_hidden_size=128):
-        super(MLPBase, self).__init__(recurrent, num_inputs, hidden_sizes[-1], recurrent_hidden_size)
+        super(MLPBase, self).__init__(recurrent, hidden_sizes[-1], recurrent_hidden_size)
 
         init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.
                                constant_(x, 0), np.sqrt(2))
