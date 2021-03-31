@@ -12,4 +12,4 @@ parameters:
     recurrent: false # param not used
 
     # INFLUENCE MODEL
-    influence: false # param not used
+    influence: false
