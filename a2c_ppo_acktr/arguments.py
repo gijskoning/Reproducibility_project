@@ -5,7 +5,6 @@ import torch
 
 def get_args(optional_args=None):
     parser = argparse.ArgumentParser(description='RL')
-    parser.parse_args(optional_args)
     parser.add_argument(
         '--algo', default='a2c', help='algorithm to use: a2c | ppo | acktr')
     parser.add_argument(
@@ -154,7 +153,7 @@ def get_args(optional_args=None):
         '--yaml-file',
         default='FNN',
         help='specify the name of the yaml config file found in configs/{env_name}/{yaml_file_name}.yaml')
-    args = parser.parse_args()
+    args = parser.parse_args(optional_args)
 
     args.cuda = not args.no_cuda and torch.cuda.is_available()
 
