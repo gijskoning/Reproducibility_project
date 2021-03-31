@@ -3,7 +3,7 @@ import glob
 
 from datetime import datetime
 from matplotlib import pyplot as plt
-
+import numpy as np
 
 class DataSaver(object):
 
@@ -44,11 +44,15 @@ def create_average_reward_list(x_list, y_list, step_size):
     return average_reward
 
 
-def main():
-    list_of_files = glob.glob('data/*.txt')  # * means all if need specific format then *.csv
-    latest_file = max(list_of_files, key=os.path.getctime)
-
-    file = open(latest_file, 'r')  # use latest file or specify own file
+def plot_data(name_of_file=None):
+    if name_of_file is None:
+        list_of_files = glob.glob('data/*.txt')  # * means all if need specific format then *.csv
+        latest_file = max(list_of_files, key=os.path.getctime)
+        name_of_file = latest_file
+    else:
+        name_of_file = "data/"+name_of_file
+    print(name_of_file)
+    file = open(name_of_file, 'r')  # use latest file or specify own file
     file.readline()  # skip first two lines with run info
     file.readline()
     x = []
@@ -66,12 +70,14 @@ def main():
     plt.xlabel("timesteps")
     plt.ylabel("mean rewards")
     plt.show()
+
     average_reward_list = create_average_reward_list(x, y, average_over_steps)
-    plt.plot(average_reward_list)
+    x = average_over_steps*np.arange(len(average_reward_list))
+    plt.plot(x, average_reward_list)
     plt.xlabel(f"timesteps averaged over {average_over_steps}")
     plt.ylabel("mean rewards")
     plt.show()
 
 
 if __name__ == "__main__":
-    main()
+    plot_data()
