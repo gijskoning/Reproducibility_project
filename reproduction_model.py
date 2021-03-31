@@ -17,18 +17,27 @@ class IAMPolicy(nn.Module):
     This class contains the reproduction Policy model.
     """
 
-    def __init__(self, obs_shape, action_space, base=None, base_kwargs=None):
+    def __init__(self, obs_shape, action_space, IAM=False, base_kwargs=None):
         super(IAMPolicy, self).__init__()
         if base_kwargs is None:
             base_kwargs = {}
-        if base is None:
-            if len(obs_shape) == 3:
-                base = CNNBase
-            elif len(obs_shape) == 1:
-                base = MLPBase
-            else:
-                raise NotImplementedError
 
+        if len(obs_shape) == 3:
+            if IAM:
+                print("Using IAMBaseCNN")
+                base = IAMBaseCNN
+            else:
+                print("Using CNNBase")
+                base = CNNBase
+        elif len(obs_shape) == 1:
+            if IAM:
+                print("Using IAMBase")
+                base = IAMBase
+            else:
+                print("Using MLPBase")
+                base = MLPBase
+        else:
+            raise NotImplementedError
         self.base = base(obs_shape[0], **base_kwargs)
 
         if action_space.__class__.__name__ == "Discrete":
@@ -87,7 +96,7 @@ class IAMPolicy(nn.Module):
 
 
 class NNBase(nn.Module):
-    def __init__(self, recurrent, recurrent_input_size, hidden_size, recurrent_hidden_size=128):
+    def __init__(self, recurrent, recurrent_input_size, hidden_size, recurrent_hidden_size):
         super(NNBase, self).__init__()
 
         self._hidden_size = hidden_size
@@ -213,25 +222,25 @@ class CNNBase(NNBase):
 
 
 class MLPBase(NNBase):
-    def __init__(self, num_inputs, recurrent=False, hidden_size=64, second_hidden_size=64):
-        super(MLPBase, self).__init__(recurrent, num_inputs, second_hidden_size)
+    def __init__(self, num_inputs, recurrent=False, hidden_sizes=(64, 64), recurrent_hidden_size=128):
+        super(MLPBase, self).__init__(recurrent, num_inputs, hidden_sizes[1], recurrent_hidden_size)
 
         if recurrent:
-            num_inputs = hidden_size
+            num_inputs = hidden_sizes[0]
 
         init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.
                                constant_(x, 0), np.sqrt(2))
 
         def create_base():
             return nn.Sequential(
-                init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
-                init_(nn.Linear(hidden_size, second_hidden_size)), nn.Tanh())
+                init_(nn.Linear(num_inputs, hidden_sizes[0])), nn.Tanh(),
+                init_(nn.Linear(*hidden_sizes)), nn.Tanh())
 
         self.actor = create_base()
 
         self.critic = create_base()
 
-        self.critic_linear = init_(nn.Linear(second_hidden_size, 1))
+        self.critic_linear = init_(nn.Linear(hidden_sizes[1], 1))
 
         self.train()
 
@@ -248,29 +257,29 @@ class MLPBase(NNBase):
 
 
 class IAMBase(MLPBase):
-    def __init__(self, num_inputs, recurrent, hidden_size, second_hidden_size):
-        super(IAMBase, self).__init__(num_inputs, recurrent, hidden_size, second_hidden_size)
+    def __init__(self, num_inputs, recurrent, hidden_sizes, recurrent_hidden_size=128):
+        super(IAMBase, self).__init__(num_inputs, recurrent, hidden_sizes, recurrent_hidden_size)
         assert recurrent
 
         init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.
                                constant_(x, 0), np.sqrt(2))
 
-        def create_base():
+        def create_fnn():
             return nn.Sequential(
-                init_(nn.Linear(num_inputs, hidden_size)), nn.Tanh(),
-                init_(nn.Linear(hidden_size, second_hidden_size)), nn.Tanh())
+                init_(nn.Linear(num_inputs, hidden_sizes[0])), nn.Tanh(),
+                init_(nn.Linear(*hidden_sizes)), nn.Tanh())
 
         recurrent_input_size = num_inputs
         self.rnn_hidden_size = 128
-        self.actor = create_base()
+        self.actor = create_fnn()
         self.actor_rnn = self._create_gru(recurrent_input_size, self.rnn_hidden_size)
         # self.actor_linear_combine_rnn = init_(nn.Linear(second_hidden_size, 1))
 
-        self.critic = create_base()
+        self.critic = create_fnn()
         self.critic_rnn = self._create_gru(recurrent_input_size, self.rnn_hidden_size)
         # self.critic_linear_combine_rnn = init_(nn.Linear(second_hidden_size, 1))
 
-        self.critic_linear = init_(nn.Linear(second_hidden_size + self.rnn_hidden_size, 1))
+        self.critic_linear = init_(nn.Linear(hidden_sizes[1] + self.rnn_hidden_size, 1))
 
         self.train()
 
@@ -305,3 +314,23 @@ class IAMBase(MLPBase):
     @property
     def output_size(self):
         return self._hidden_size + self.rnn_hidden_size
+
+
+class IAMBaseCNN(IAMBase):
+
+    def __init__(self, num_inputs, recurrent, hidden_sizes):
+        super(IAMBaseCNN, self).__init__(num_inputs, recurrent, hidden_sizes, recurrent_hidden_size=256)
+
+        init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.
+                               constant_(x, 0), nn.init.calculate_gain('relu'))
+
+        self.cnn_preprocessor = nn.Sequential(
+            init_(nn.Conv2d(num_inputs, 32, (8, 8), stride=(4, 4))), nn.ReLU(),
+            init_(nn.Conv2d(32, 64, (4, 4), stride=(2, 2))), nn.ReLU(),
+            init_(nn.Conv2d(64, 64, (3, 3), stride=(1, 1))), nn.ReLU(), Flatten(),
+            init_(nn.Linear(64 * 7 * 7, hidden_sizes[0])), nn.ReLU())
+
+    def forward(self, inputs, rnn_hxs, masks):
+        x = self.cnn_preprocessor(inputs)
+
+        super(IAMBaseCNN, self).forward(x, rnn_hxs, masks)

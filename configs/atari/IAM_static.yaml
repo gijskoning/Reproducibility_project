@@ -35,8 +35,8 @@ parameters:
     # MAIN MODEL
     # Fully connected module
     fully_connected: true
-    num_fc_layers: 1
-    num_fc_units: [256]
+    num_fc_layers: 2
+    num_fc_units: [512, 256]
     # Convolutional module
     convolutional: true
     num_conv_layers: 3

@@ -36,15 +36,11 @@ def create_default_model(envs, args):
 
 def create_IAM_model(envs, args, parameters):
     #  Here is the model created! And we should change only this part.
-    base = MLPBase
-    if parameters['influence']:
-        base = IAMBase
     actor_critic = IAMPolicy(
         obs_shape=envs.observation_space.shape,
         action_space=envs.action_space,
-        base=base,
-        base_kwargs={'recurrent': args.recurrent_policy, 'hidden_size': parameters['num_fc_units'][0],
-                     'second_hidden_size': parameters['num_fc_units'][1]})
+        IAM=parameters['influence'],
+        base_kwargs={'recurrent': args.recurrent_policy, 'hidden_sizes': parameters['num_fc_units']})
     return actor_critic
 
 
@@ -58,6 +54,9 @@ class Main:
         self.config_parameters = ""
         if args.env_name == "Warehouse":
             self.config_parameters = read_parameters('parameters', 'warehouse/' + args.yaml_file)
+        elif "Breakout" in args.env_name:
+            self.config_parameters = read_parameters('parameters', 'atari/' + args.yaml_file)
+
         self.model_file_name = args.env_name + "_" + start_time_str + ".pt"
         self.data_saver = DataSaver(start_time_str)
         line = "Starting new run: with args " + args.__str__()
