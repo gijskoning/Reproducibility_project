@@ -57,13 +57,15 @@ def plot_data(name_of_file=None):
     file.readline()
     x = []
     y = []
+    time_elapsed = 0
     for line in file:
         line_data = line.split(',')
         # Timestep
         x.append(float(line_data[1]))
         # Rewards
         y.append(float(line_data[4]))
-
+        time_elapsed = line_data[-2]
+    print(f"time_elapsed: {int(float(time_elapsed))} seconds or {int(float(time_elapsed)/60)} minutes")
     average_over_steps = 10000
 
     plt.plot(x, y)

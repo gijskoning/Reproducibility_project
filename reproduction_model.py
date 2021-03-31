@@ -98,7 +98,7 @@ class IAMPolicy(nn.Module):
 
 
 class NNBase(nn.Module):
-    def __init__(self, recurrent, recurrent_input_size, hidden_size, recurrent_hidden_size):
+    def __init__(self, recurrent, hidden_size, recurrent_hidden_size):
         super(NNBase, self).__init__()
 
         self._hidden_size = hidden_size
