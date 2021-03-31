@@ -4,7 +4,7 @@ parameters:
     # MAIN MODEL
     num_frames: 1
     num_fc_layers: 2
-    num_fc_units: [512, 256]
+    num_fc_units: [256]
     # INFLUENCE MODEL
     influence: true
     # Attention
