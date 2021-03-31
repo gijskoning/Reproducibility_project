@@ -67,8 +67,6 @@ class Main:
         self.data_saver.append(line)
         print(line)
 
-
-
     def run(self):
         args = self.args
         torch.manual_seed(args.seed)
@@ -230,9 +228,10 @@ class Main:
             if j % args.log_interval == 0 and len(episode_rewards) > 1:
                 total_num_steps = (j + 1) * args.num_processes * args.num_steps
                 end = time.time()
+                elapsed_time = end - start
                 data = [j,  # Updates
                         total_num_steps,  # timesteps
-                        int(total_num_steps / (end - start)),  # FPS
+                        int(total_num_steps / elapsed_time),  # FPS
                         len(episode_rewards),  # Only useful for print statement
                         np.mean(episode_rewards),  # mean of rewards
                         np.median(episode_rewards),  # median of rewards
@@ -240,12 +239,12 @@ class Main:
                         np.max(episode_rewards),  # max rewards
                         dist_entropy,
                         value_loss,
-                        action_loss]
+                        action_loss,
+                        elapsed_time]
                 output = ''.join([str(x) + ',' for x in data])
                 self.data_saver.append(output)
                 print(
-                    "Updates {}, num timesteps {}, FPS {} \n Last {} training episodes: mean/median reward {:.1f}/{:.1f}, min/max reward {:.1f}/{:.1f}\n"
-                        .format(*data))
+                    f"Updates {data[0]}, num timesteps {data[1]}, FPS {data[2]}, elapsed time {int(data[11])} sec \n Last {data[3]} training episodes: mean/median reward {data[4]:.2f}/{data[5]:.2f}, min/max reward {data[6]:.1f}/{data[7]:.1f}\n")
 
             if (args.eval_interval is not None and len(episode_rewards) > 1
                     and j % args.eval_interval == 0):
