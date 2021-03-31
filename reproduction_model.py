@@ -280,20 +280,19 @@ class IAMBase(MLPBase):
         hidden_critic = self.critic(x)
         hidden_actor = self.actor(x)
         # Split the rnn_hxs in two. This is just a hack to get two GRU's at the same time with the ppo algo!
-        left_rnn_hxs = rnn_hxs[:, :self._recurrent_hidden_size]
-        right_rnn_hxs = rnn_hxs[:, self._recurrent_hidden_size:]
+        left_rnn_hxs, right_rnn_hxs = rnn_hxs.split(self._recurrent_hidden_size, 1)
 
-        critic_x, left_rnn_hxs = \
+        hidden_critic_rnn, left_rnn_hxs = \
             self._forward_gru(x, left_rnn_hxs, masks, self.actor_rnn)
 
-        actor_x, right_rnn_hxs = \
+        hidden_actor_rnn, right_rnn_hxs = \
             self._forward_gru(x, right_rnn_hxs, masks, self.critic_rnn)
 
-        hidden_critic = torch.cat([hidden_critic, critic_x], 1)
-        hidden_actor = torch.cat([hidden_actor, actor_x], 1)
+        # Combine critic FNN with RNN
+        hidden_critic = torch.cat([hidden_critic, hidden_critic_rnn], 1)
+        hidden_actor = torch.cat([hidden_actor, hidden_actor_rnn], 1)
 
-        rnn_hxs[:, :self._recurrent_hidden_size] = left_rnn_hxs
-        rnn_hxs[:, self._recurrent_hidden_size:] = right_rnn_hxs
+        rnn_hxs = torch.cat([left_rnn_hxs, right_rnn_hxs], 1)
 
         return self.critic_linear(hidden_critic), hidden_actor, rnn_hxs
 
