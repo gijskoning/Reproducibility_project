@@ -27,11 +27,12 @@ class DataSaver(object):
             self.to_be_appended_lines = []
 
 
-def create_average_reward_list(x_list, y_list, step_size):
+def create_average_reward_list(x_list, y_list, step_size=100, average_size=10000):
     sum_bin = 0
     count = 0
     current_step_bin = step_size
     average_reward = []
+    remove_first = y_list[0]
     # create average points over
     for i in range(len(x_list)):
         count += 1
@@ -39,8 +40,9 @@ def create_average_reward_list(x_list, y_list, step_size):
         if x_list[i] > current_step_bin:
             current_step_bin += step_size
             average_reward.append(sum_bin / count)
-            sum_bin = 0
-            count = 0
+            if i > average_size:
+                sum_bin -= y_list[i-average_size]
+                count = average_size - 1
     return average_reward
 
 
@@ -66,7 +68,7 @@ def plot_data(name_of_file=None):
         y.append(float(line_data[4]))
         time_elapsed = line_data[-2]
     print(f"time_elapsed: {int(float(time_elapsed))} seconds or {int(float(time_elapsed)/60)} minutes")
-    average_over_steps = 10000
+    average_over_steps = 100
 
     plt.plot(x, y)
     plt.xlabel("timesteps")
