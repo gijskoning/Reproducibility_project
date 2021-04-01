@@ -261,10 +261,10 @@ class MLPBase(NNBase):
 
 
 class IAMBase(MLPBase):
-    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_input_size=None, recurrent_hidden_size=128):
-        super(IAMBase, self).__init__(num_inputs, recurrent, hidden_sizes, recurrent_hidden_size)
+    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_input_size=None, rnn_hidden_size=128):
+        super(IAMBase, self).__init__(num_inputs, recurrent, hidden_sizes, rnn_hidden_size)
         assert recurrent
-        print(rnn_input_size)
+        # todo could remove this if statement since currently input size is always none
         if rnn_input_size is None:
             rnn_input_size = num_inputs
 
@@ -316,13 +316,12 @@ class IAMBase(MLPBase):
 
 class IAMBaseCNN(IAMBase):
 
-    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_input_size):
+    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_hidden_size):
         final_hidden_size = 64
         final_hidden_size_flattened = final_hidden_size * 7 * 7
         # to much hacking here
         super(IAMBaseCNN, self).__init__(final_hidden_size_flattened, recurrent, hidden_sizes,
-                                         rnn_input_size=rnn_input_size,
-                                         recurrent_hidden_size=256)
+                                         rnn_hidden_size=rnn_hidden_size)
 
         init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.constant_(x, 0),
                                nn.init.calculate_gain('relu'))

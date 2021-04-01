@@ -242,8 +242,7 @@ class Warehouse(object):
         state_bitmap = np.zeros([self.n_rows, self.n_columns, 2], dtype=np.int)
         for item in self.items:
             item_pos = item.get_position
-            # todo very strange should this actually be item.get_waiting_time?
-            state_bitmap[item_pos[0], item_pos[1], 0] = item.get_waiting_time
+            state_bitmap[item_pos[0], item_pos[1], 0] = 1
         for robot in self.robots:
             robot_pos = robot.get_position
             state_bitmap[robot_pos[0], robot_pos[1], 1] = 1
