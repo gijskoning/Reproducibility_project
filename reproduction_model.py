@@ -261,15 +261,15 @@ class MLPBase(NNBase):
 
 
 class IAMBase(MLPBase):
-    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_input_size=None, rnn_hidden_size=128):
+    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_input_size=None, rnn_hidden_size=25):# 25 rnn_hidden
         super(IAMBase, self).__init__(num_inputs, recurrent, hidden_sizes, rnn_hidden_size)
         assert recurrent
         # todo could remove this if statement since currently input size is always none
         if rnn_input_size is None:
             rnn_input_size = num_inputs
 
-        init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.constant_(x, 0), np.sqrt(2))
-        self.static_A_matrix = init_(nn.Linear(num_inputs, rnn_input_size))
+        # init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.constant_(x, 0), np.sqrt(2))
+        # self.static_A_matrix = init_(nn.Linear(num_inputs, rnn_input_size))
 
         self.actor_rnn = self._create_gru(rnn_input_size, self._recurrent_hidden_size)
 
@@ -283,7 +283,7 @@ class IAMBase(MLPBase):
 
     def forward(self, input, rnn_hxs, masks):
         fnn_input = input
-        rnn_input = self.static_A_matrix(input)
+        rnn_input = input #self.static_A_matrix(input)
 
         hidden_critic = self.critic_fnn(fnn_input)
         hidden_actor = self.actor_fnn(fnn_input)

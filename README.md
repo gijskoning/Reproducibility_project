@@ -30,6 +30,10 @@ With recursion:
 ```
 python main.py --env-name Warehouse --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01 --recurrent-policy --cuda-deterministic
 ```
+With recursion and extra parameters specified by the yml files in the config directory:
+```
+python main.py --env-name Warehouse --yaml-file IAM_static --recurrent-policy --num-processes 8 --num-steps 8 --num-mini-batch 8 --log-interval 30 --use-linear-lr-decay --entropy-coef 0.01 --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1
+```
 Traffic lights aka Sumo
 ```
 python main.py --env-name Sumo --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01 --cuda-deterministic
