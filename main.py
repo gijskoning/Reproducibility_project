@@ -146,8 +146,8 @@ class Main:
         obs = envs.reset()
         rollouts.obs[0].copy_(obs)
         rollouts.to(device)
-
-        episode_rewards = deque(maxlen=args.log_interval)
+        # Always return the average of the last 100 steps. This means the average is sampled.
+        episode_rewards = deque(maxlen=100)
 
         start = time.time()
         num_updates = int(
