@@ -8,19 +8,19 @@ import numpy as np
 class DataSaver(object):
 
     def __init__(self, start_time_str=datetime.now().strftime("%m-%d-%Y-%H-%M-%S")):
-        self.file = "data/output" + start_time_str + ".txt"
-        # open(self.file, 'w')
+        self.file_name = start_time_str + ".txt"
+        self.file_path = "data/output" + self.file_name
         self._count = 0
         self.minimal_line_count = 5
         self.to_be_appended_lines = []
-        print("Log file: ", self.file)
+        print("Log file: ", self.file_path)
 
     def append(self, line):
         self.to_be_appended_lines.append(line)
         self._count += 1
         # Only create and write to file when
         if self._count > self.minimal_line_count:
-            file = os.open(self.file, os.O_APPEND | os.O_RDWR | os.O_CREAT)
+            file = os.open(self.file_path, os.O_APPEND | os.O_RDWR | os.O_CREAT)
             for l in self.to_be_appended_lines:
                 os.write(file, str.encode(l + '\n'))
             os.close(file)
