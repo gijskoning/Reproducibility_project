@@ -5,6 +5,7 @@ from datetime import datetime
 from matplotlib import pyplot as plt
 import numpy as np
 
+
 class DataSaver(object):
 
     def __init__(self, start_time_str=datetime.now().strftime("%m-%d-%Y-%H-%M-%S")):
@@ -79,11 +80,11 @@ def plot_data(name_of_file=None, calculate_average_each_step=200, average_over_l
     plt.ylabel("mean rewards")
     plt.show()
 
-    average_reward_list = create_average_reward_list(time_steps, rewards, calculate_average_each_step,
-                                                     average_over_log_lines)
+    average_reward_list = np.array(create_average_reward_list(time_steps, rewards, calculate_average_each_step,
+                                                              average_over_log_lines)) * scale_reward
     time_steps = average_over_log_lines * np.arange(len(average_reward_list))
     print("Final reward: ", average_reward_list[-1])
-    plt.plot(time_steps, np.array(average_reward_list)*scale_reward)
+    plt.plot(time_steps, average_reward_list)
     plt.xlabel(f"timesteps averaged over {average_over_log_lines}")
     plt.ylabel("mean rewards")
     plt.show()
