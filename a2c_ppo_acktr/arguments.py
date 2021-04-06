@@ -130,11 +130,11 @@ def get_args(optional_args=None):
         '--save-dir',
         default='./trained_models/',
         help='directory to save agent logs (default: ./trained_models/)')
-    parser.add_argument(
-        '--no-cuda',
-        action='store_true',
-        default=False,
-        help='disables CUDA training')
+    # parser.add_argument(
+    #     '--no-cuda',
+    #     action='store_true',
+    #     default=False,
+    #     help='disables CUDA training')
     parser.add_argument(
         '--use-proper-time-limits',
         action='store_true',
@@ -166,7 +166,7 @@ def get_args(optional_args=None):
         help='List of FNN hidden sizes')
     args = parser.parse_args(optional_args)
     args.fnn_hidden_sizes = list(map(int, args.fnn_hidden_sizes.split(',')))
-    args.cuda = not args.no_cuda and torch.cuda.is_available()
+    args.cuda = not args.cuda_deterministic and torch.cuda.is_available()
 
     assert args.algo in ['a2c', 'ppo', 'acktr']
     if args.recurrent_policy:

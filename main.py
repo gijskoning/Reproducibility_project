@@ -72,7 +72,7 @@ class Main:
         torch.manual_seed(args.seed)
         torch.cuda.manual_seed_all(args.seed)
         print("CUDA is available: ", torch.cuda.is_available())
-        if args.cuda and torch.cuda.is_available() and args.cuda_deterministic:
+        if args.cuda:
             print("CUDA enabled")
             torch.backends.cudnn.benchmark = False
             torch.backends.cudnn.deterministic = True
@@ -86,6 +86,7 @@ class Main:
         eval_log_dir = log_dir + "_eval"
         utils.cleanup_log_dir(log_dir)
         utils.cleanup_log_dir(eval_log_dir)
+        print("get_num_thread", torch.get_num_thread())
 
         torch.set_num_threads(1)
         device = torch.device("cuda:0" if args.cuda else "cpu")
