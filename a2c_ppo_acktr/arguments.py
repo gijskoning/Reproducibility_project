@@ -158,14 +158,14 @@ def get_args(optional_args=None):
         '--rec-hidden-size',
         default=128,
         type=int,
-        help='List of recurrent hidden size')
-    # parser.add_argument(
-    #     '--num-fc-units',
-    #     default=[512, 256],
-    #     type=List[int],
-    #     help='List of recurrent hidden size')
+        help='Recurrent hidden size')
+    parser.add_argument(
+        '--fnn-hidden-sizes',
+        default='512,256',
+        type=str,
+        help='List of FNN hidden sizes')
     args = parser.parse_args(optional_args)
-
+    args.fnn_hidden_sizes = list(map(int, args.fnn_hidden_sizes.split(',')))
     args.cuda = not args.no_cuda and torch.cuda.is_available()
 
     assert args.algo in ['a2c', 'ppo', 'acktr']

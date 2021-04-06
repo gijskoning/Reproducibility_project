@@ -59,10 +59,10 @@ parameters:
     inf_box_center: [[0, 0]]
     inf_num_predictors: 1
     # Influence fully connected module
-    inf_num_fc_layers: 0
-    inf_num_fc_units: [128]
+    inf_num_fc_layers: 0 # param not used
+    inf_num_fc_units: [128] # param not used
     # Influence recurrent module
-    inf_num_rec_units: 256
+    inf_num_rec_units: 256 # param not used
     inf_seq_len: 4
 
     # PPO only
