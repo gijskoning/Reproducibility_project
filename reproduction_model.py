@@ -261,7 +261,7 @@ class MLPBase(NNBase):
 
 
 class IAMBase(MLPBase):
-    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_input_size=None, rnn_hidden_size=25):# 25 rnn_hidden
+    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_input_size=None, rnn_hidden_size=25):
         super(IAMBase, self).__init__(num_inputs, recurrent, hidden_sizes, rnn_hidden_size)
         assert recurrent
         # todo could remove this if statement since currently input size is always none

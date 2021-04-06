@@ -1,4 +1,5 @@
 import argparse
+from typing import List
 
 import torch
 
@@ -153,6 +154,16 @@ def get_args(optional_args=None):
         '--yaml-file',
         default='FNN',
         help='specify the name of the yaml config file found in configs/{env_name}/{yaml_file_name}.yaml')
+    parser.add_argument(
+        '--rec-hidden-size',
+        default=128,
+        type=int,
+        help='List of recurrent hidden size')
+    # parser.add_argument(
+    #     '--num-fc-units',
+    #     default=[512, 256],
+    #     type=List[int],
+    #     help='List of recurrent hidden size')
     args = parser.parse_args(optional_args)
 
     args.cuda = not args.no_cuda and torch.cuda.is_available()
