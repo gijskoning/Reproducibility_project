@@ -24,11 +24,11 @@ Next to that I am not sure if num workers is equal to num-steps. num-steps equal
 
 *Use --num-processes 2 --num-steps 16 when low on memory*
 ```
-python main.py --env-name Warehouse --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01 --cuda-deterministic
+python main.py --env-name Warehouse --yaml-file IAM_static --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01 --cuda-deterministic
 ```
 With recursion:
 ```
-python main.py --env-name Warehouse --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01 --recurrent-policy --cuda-deterministic
+python main.py --env-name Warehouse --yaml-file IAM_static --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01 --recurrent-policy --cuda-deterministic
 ```
 With recursion and extra parameters specified by the yml files in the config directory:
 ```
