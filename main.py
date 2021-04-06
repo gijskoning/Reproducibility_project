@@ -36,12 +36,14 @@ def create_default_model(envs, args):
 
 def create_IAM_model(envs, args, parameters):
     #  Here is the model created! And we should change only this part.
+    base_kwargs = {'recurrent': args.recurrent_policy, 'hidden_sizes': args.fnn_hidden_sizes}
+    if args.rec_hidden_size:
+        base_kwargs['rnn_hidden_size'] = args.rec_hidden_size
     actor_critic = IAMPolicy(
         obs_shape=envs.observation_space.shape,
         action_space=envs.action_space,
         IAM=parameters['influence'],
-        base_kwargs={'recurrent': args.recurrent_policy, 'hidden_sizes': args.fnn_hidden_sizes,
-                     'rnn_hidden_size': args.rec_hidden_size})
+        base_kwargs=base_kwargs)
     return actor_critic
 
 
