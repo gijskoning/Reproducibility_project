@@ -156,7 +156,7 @@ def get_args(optional_args=None):
         help='specify the name of the yaml config file found in configs/{env_name}/{yaml_file_name}.yaml')
     parser.add_argument(
         '--rec-hidden-size',
-        default=128,
+        default=None,
         type=int,
         help='Recurrent hidden size')
     parser.add_argument(

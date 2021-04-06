@@ -36,12 +36,14 @@ def create_default_model(envs, args):
 
 def create_IAM_model(envs, args, parameters):
     #  Here is the model created! And we should change only this part.
+    base_kwargs = {'recurrent': args.recurrent_policy, 'hidden_sizes': args.fnn_hidden_sizes}
+    if args.rec_hidden_size:
+        base_kwargs['rnn_hidden_size'] = args.rec_hidden_size
     actor_critic = IAMPolicy(
         obs_shape=envs.observation_space.shape,
         action_space=envs.action_space,
         IAM=parameters['influence'],
-        base_kwargs={'recurrent': args.recurrent_policy, 'hidden_sizes': args.fnn_hidden_sizes,
-                     'rnn_hidden_size': args.rec_hidden_size})
+        base_kwargs=base_kwargs)
     return actor_critic
 
 
@@ -88,7 +90,6 @@ class Main:
         utils.cleanup_log_dir(eval_log_dir)
         print("get_num_thread", torch.get_num_threads())
 
-        torch.set_num_threads(1)
         device = torch.device("cuda:0" if args.cuda else "cpu")
 
         envs = make_vec_envs(args.env_name, self.config_parameters, args.seed, args.num_processes,
@@ -147,8 +148,8 @@ class Main:
         obs = envs.reset()
         rollouts.obs[0].copy_(obs)
         rollouts.to(device)
-
-        episode_rewards = deque(maxlen=args.log_interval)
+        # Always return the average of the last 100 steps. This means the average is sampled.
+        episode_rewards = deque(maxlen=100)
 
         start = time.time()
         num_updates = int(
