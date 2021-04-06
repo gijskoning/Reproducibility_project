@@ -252,11 +252,11 @@ class MLPBase(NNBase):
     def create_fnn(self, num_inputs, hidden_sizes):
         init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.
                                constant_(x, 0), np.sqrt(2))
-        module = nn.Sequential(
-            init_(nn.Linear(num_inputs, hidden_sizes[0])), nn.Tanh())
+        seq_list = [init_(nn.Linear(num_inputs, hidden_sizes[0])), nn.Tanh()]
         if len(hidden_sizes) > 1:
-            module.add_module(init_(nn.Linear(*hidden_sizes)), nn.Tanh())
+            seq_list.extend([init_(nn.Linear(*hidden_sizes)), nn.Tanh()])
 
+        module = nn.Sequential(*seq_list)
         return module
 
 
