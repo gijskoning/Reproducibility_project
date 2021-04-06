@@ -34,15 +34,15 @@ parameters:
 
     # MAIN MODEL
     # Fully connected module
-    fully_connected: true
-    num_fc_layers: 1
+    fully_connected: true #not used
+    num_fc_layers: 2 #not used
     num_fc_units: [256]
     # Convolutional module
-    convolutional: true
-    num_conv_layers: 3
-    num_filters: [32, 64, 64]
-    kernel_sizes: [8, 4, 3]
-    strides: [4, 2, 1]
+    convolutional: true #not used
+    num_conv_layers: 3 #not used
+    num_filters: [32, 64, 64] #not used
+    kernel_sizes: [8, 4, 3] #not used
+    strides: [4, 2, 1] #not used
     # Recurrent module
     recurrent: false
 

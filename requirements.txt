@@ -12,3 +12,5 @@ networkx
 pyyaml>=5
 sumolib
 traci
+gym[atari]
+gym

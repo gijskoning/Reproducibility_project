@@ -27,11 +27,12 @@ class DataSaver(object):
             self.to_be_appended_lines = []
 
 
-def create_average_reward_list(x_list, y_list, step_size):
+def create_average_reward_list(x_list, y_list, step_size=100, average_size=10000):
     sum_bin = 0
     count = 0
     current_step_bin = step_size
     average_reward = []
+    # remove_first = y_list[0]
     # create average points over
     for i in range(len(x_list)):
         count += 1
@@ -39,8 +40,9 @@ def create_average_reward_list(x_list, y_list, step_size):
         if x_list[i] > current_step_bin:
             current_step_bin += step_size
             average_reward.append(sum_bin / count)
-            sum_bin = 0
-            count = 0
+            if i > average_size:
+                sum_bin -= y_list[i-average_size]
+                count = average_size - 1
     return average_reward
 
 
@@ -57,21 +59,24 @@ def plot_data(name_of_file=None):
     file.readline()
     x = []
     y = []
+    time_elapsed = 0
     for line in file:
         line_data = line.split(',')
         # Timestep
         x.append(float(line_data[1]))
         # Rewards
         y.append(float(line_data[4]))
-
+        time_elapsed = line_data[-2]
+    print(f"time_elapsed: {int(float(time_elapsed))} seconds or {int(float(time_elapsed)/60)} minutes")
     average_over_steps = 10000
+    calculate_average_each_step = 100
 
     plt.plot(x, y)
     plt.xlabel("timesteps")
     plt.ylabel("mean rewards")
     plt.show()
 
-    average_reward_list = create_average_reward_list(x, y, average_over_steps)
+    average_reward_list = create_average_reward_list(x, y, calculate_average_each_step ,average_over_steps)
     x = average_over_steps*np.arange(len(average_reward_list))
     plt.plot(x, average_reward_list)
     plt.xlabel(f"timesteps averaged over {average_over_steps}")
