@@ -6,12 +6,12 @@ parameters:
     # MAIN MODEL
     # Fully connected module
     fully_connected: true
-    num_fc_units: [640]  # param not used
+#    num_fc_units: [640]  # param not used
     # Convolutional module
     convolutional: false
     # Recurrent module
     recurrent: true
-    num_rec_units: 256  # param not used
+#    num_rec_units: 256  # param not used
     seq_len: 8
     # INFLUENCE MODEL
     influence: false

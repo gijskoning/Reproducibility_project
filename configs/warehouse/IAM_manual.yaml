@@ -7,7 +7,7 @@ parameters:
     # Fully connected module
     fully_connected: true
     num_fc_layers: 2 # param not used
-    num_fc_units: [576, 256] # param not used
+#    num_fc_units: [576, 256] # param not used
     # Convolutional module
     convolutional: false
     # Recurrent module
@@ -23,5 +23,5 @@ parameters:
     inf_num_predictors: 25
     dset: [0, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62,
            63, 64, 65, 66, 67, 68, 69, 70, 71, 72]
-    inf_num_rec_units: 64 # param not used
+#    inf_num_rec_units: 64 # param not used
     inf_seq_len: 8

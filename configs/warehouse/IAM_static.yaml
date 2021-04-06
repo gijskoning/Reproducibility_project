@@ -3,7 +3,7 @@ parameters:
     env_type: 'warehouse'
     # MAIN MODEL
     num_frames: 1
-    num_fc_units: [256] # param not used
+#    num_fc_units: [256] # param not used
     # INFLUENCE MODEL
     influence: true
     # Attention
