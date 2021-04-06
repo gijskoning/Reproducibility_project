@@ -28,7 +28,7 @@ class DataSaver(object):
             self.to_be_appended_lines = []
 
 
-def create_average_reward_list(time_steps, sample_rewards, step_size, average_over_log_lines):
+def create_average_reward_list(time_steps, sample_rewards, step_size, average_over_steps):
     """
     Creates a list of bins/points of average reward. The step_size defines how many log lines are used for each bin.
     An average is calculated over a certain amount of previous log lines. This is defined by average_over_log_lines.
@@ -36,23 +36,25 @@ def create_average_reward_list(time_steps, sample_rewards, step_size, average_ov
     sum_bin = 0
     count = 0
     current_step_bin = step_size
-    average_reward = []
+    average_rewards = []
     # create average points over
+    last_reward_index = 0
     for i in range(len(time_steps)):
         sum_bin += sample_rewards[i]
         # remove oldest reward in rolling average
-        if i >= average_over_log_lines:
-            sum_bin -= sample_rewards[i - average_over_log_lines]
+        if time_steps[i] - time_steps[last_reward_index] > average_over_steps:
+            sum_bin -= sample_rewards[last_reward_index]
+            last_reward_index += 1
         else:
             count += 1
         # Append rolling average to average_reward list
         if time_steps[i] > current_step_bin:
             current_step_bin += step_size
-            average_reward.append(sum_bin / count)
-    return average_reward
+            average_rewards.append(sum_bin / count)
+    return average_rewards
 
 
-def plot_data(name_of_file=None, calculate_average_each_step=200, average_over_log_lines=10, scale_reward=100):
+def plot_data(name_of_file=None, calculate_average_each_step=20000, average_over_last_steps=200000, scale_reward=100):
     if name_of_file is None:
         list_of_files = glob.glob('data/*.txt')  # * means all if need specific format then *.csv
         latest_file = max(list_of_files, key=os.path.getctime)
@@ -65,14 +67,15 @@ def plot_data(name_of_file=None, calculate_average_each_step=200, average_over_l
     file.readline()
     time_steps = []
     rewards = []
-    time_elapsed = 0
+    line_data = None
     for line in file:
         line_data = line.split(',')
         # Timestep
         time_steps.append(float(line_data[1]))
         # Rewards
         rewards.append(float(line_data[4]))
-        time_elapsed = line_data[-2]
+    time_elapsed = line_data[-2]
+
     print(f"time_elapsed: {int(float(time_elapsed))} seconds or {int(float(time_elapsed) / 60)} minutes")
 
     plt.plot(time_steps, rewards)
@@ -81,11 +84,12 @@ def plot_data(name_of_file=None, calculate_average_each_step=200, average_over_l
     plt.show()
 
     average_reward_list = np.array(create_average_reward_list(time_steps, rewards, calculate_average_each_step,
-                                                              average_over_log_lines)) * scale_reward
-    time_steps = average_over_log_lines * np.arange(len(average_reward_list))
+                                                              average_over_last_steps)) * scale_reward
+    steps = len(average_reward_list)
+    time_steps = (time_steps[-1] / steps) * np.arange(steps)
     print("Final reward: ", average_reward_list[-1])
     plt.plot(time_steps, average_reward_list)
-    plt.xlabel(f"timesteps averaged over {average_over_log_lines}")
+    plt.xlabel(f"timesteps averaged over last {average_over_last_steps} steps")
     plt.ylabel("mean rewards")
     plt.show()
 
