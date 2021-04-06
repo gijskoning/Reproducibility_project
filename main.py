@@ -86,7 +86,7 @@ class Main:
         eval_log_dir = log_dir + "_eval"
         utils.cleanup_log_dir(log_dir)
         utils.cleanup_log_dir(eval_log_dir)
-        print("get_num_thread", torch.get_num_thread())
+        print("get_num_thread", torch.get_num_threads())
 
         torch.set_num_threads(1)
         device = torch.device("cuda:0" if args.cuda else "cpu")
