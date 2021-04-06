@@ -105,8 +105,8 @@ class NNBase(nn.Module):
         self._recurrent = recurrent
         self._recurrent_hidden_size = recurrent_hidden_size
 
-        # if recurrent:
-        #     self.gru = self._create_gru(recurrent_input_size, recurrent_hidden_size)
+        if recurrent:
+            self.gru = self._create_gru(hidden_size, recurrent_hidden_size)
 
     def _create_gru(self, recurrent_input_size, recurrent_hidden_size):
         gru = nn.GRU(recurrent_input_size, recurrent_hidden_size)
