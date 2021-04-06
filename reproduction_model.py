@@ -128,7 +128,6 @@ class NNBase(nn.Module):
             return self._recurrent_hidden_size
         return 1
 
-    @property
     def output_size(self):
         return self._hidden_size
 
