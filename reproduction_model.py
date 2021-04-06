@@ -105,8 +105,8 @@ class NNBase(nn.Module):
         self._recurrent = recurrent
         self._recurrent_hidden_size = recurrent_hidden_size
 
-        # if recurrent:
-        #     self.gru = self._create_gru(recurrent_input_size, recurrent_hidden_size)
+        if recurrent:
+            self.gru = self._create_gru(hidden_size, recurrent_hidden_size)
 
     def _create_gru(self, recurrent_input_size, recurrent_hidden_size):
         gru = nn.GRU(recurrent_input_size, recurrent_hidden_size)
@@ -261,7 +261,7 @@ class MLPBase(NNBase):
 
 
 class IAMBase(MLPBase):
-    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_input_size=None, rnn_hidden_size=25):# 25 rnn_hidden
+    def __init__(self, num_inputs, recurrent, hidden_sizes, rnn_input_size=None, rnn_hidden_size=25):
         super(IAMBase, self).__init__(num_inputs, recurrent, hidden_sizes, rnn_hidden_size)
         assert recurrent
         # todo could remove this if statement since currently input size is always none

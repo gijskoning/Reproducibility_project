@@ -41,7 +41,7 @@ def create_IAM_model(envs, args, parameters):
         action_space=envs.action_space,
         IAM=parameters['influence'],
         base_kwargs={'recurrent': args.recurrent_policy, 'hidden_sizes': parameters['num_fc_units'],
-                     'rnn_hidden_size': parameters['inf_num_rec_units']})
+                     'rnn_hidden_size': args.rec_hidden_size})
     return actor_critic
 
 
