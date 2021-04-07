@@ -128,7 +128,6 @@ class NNBase(nn.Module):
             return self._recurrent_hidden_size
         return 1
 
-    @property
     def output_size(self):
         return self._hidden_size
 
@@ -283,7 +282,7 @@ class IAMBase(MLPBase):
 
     def forward(self, input, rnn_hxs, masks):
         fnn_input = input
-        rnn_input = input #self.static_A_matrix(input)
+        rnn_input = input
 
         hidden_critic = self.critic_fnn(fnn_input)
         hidden_actor = self.actor_fnn(fnn_input)
