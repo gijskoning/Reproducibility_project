@@ -357,7 +357,8 @@ class RNNBase(NNBase):
 
         self.critic_rnn = self._create_gru(num_inputs, self._recurrent_hidden_size)
 
-        self.critic_linear = init_(nn.Linear(recurrent_hidden_size[-1], 1))
+        self.critic_linear = init_(nn.Linear(self.output_size()[-1], 1))
+
 
         self.train()
 
