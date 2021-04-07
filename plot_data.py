@@ -98,8 +98,8 @@ def plot_data(name_of_file=None, calculate_average_each_step=20000, average_over
         plt.ylabel("mean rewards")
         plt.show()
 
-    average_reward_list = np.array(create_average_reward_list(time_steps, rewards, calculate_average_each_step,
-                                                              average_over_last_steps, scale_reward)) * scale_reward
+    average_reward_list = create_average_reward_list(time_steps, rewards, calculate_average_each_step,
+                                                              average_over_last_steps, scale_reward)
 
     plot_average(average_reward_list, time_steps[-1], average_over_last_steps)
 
