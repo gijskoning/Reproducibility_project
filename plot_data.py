@@ -28,7 +28,7 @@ class DataSaver(object):
             self.to_be_appended_lines = []
 
 
-def create_average_reward_list(time_steps, sample_rewards, step_size, average_over_steps):
+def create_average_reward_list(time_steps, sample_rewards, step_size, average_over_steps, scale_reward):
     """
     Creates a list of bins/points of average reward. The step_size defines how many log lines are used for each bin.
     An average is calculated over a certain amount of previous log lines. This is defined by average_over_log_lines.
@@ -51,10 +51,10 @@ def create_average_reward_list(time_steps, sample_rewards, step_size, average_ov
         if time_steps[i] > current_step_bin:
             current_step_bin += step_size
             average_rewards.append(sum_bin / count)
-    return average_rewards
+    return np.array(average_rewards) * scale_reward
 
 
-def plot_data(name_of_file=None, calculate_average_each_step=20000, average_over_last_steps=200000, scale_reward=100):
+def read_file(name_of_file):
     if name_of_file is None:
         list_of_files = glob.glob('data/*.txt')  # * means all if need specific format then *.csv
         latest_file = max(list_of_files, key=os.path.getctime)
@@ -74,25 +74,63 @@ def plot_data(name_of_file=None, calculate_average_each_step=20000, average_over
         time_steps.append(float(line_data[1]))
         # Rewards
         rewards.append(float(line_data[4]))
-    time_elapsed = line_data[-2]
+    return time_steps, rewards, line_data[-2]
 
-    print(f"time_elapsed: {int(float(time_elapsed))} seconds or {int(float(time_elapsed) / 60)} minutes")
 
-    plt.plot(time_steps, rewards)
-    plt.xlabel("timesteps")
-    plt.ylabel("mean rewards")
-    plt.show()
-
-    average_reward_list = np.array(create_average_reward_list(time_steps, rewards, calculate_average_each_step,
-                                                              average_over_last_steps)) * scale_reward
+def plot_average(average_reward_list, last_time_step, average_over_last_steps, x_label_additional_info=""):
     steps = len(average_reward_list)
-    time_steps = (time_steps[-1] / steps) * np.arange(steps)
+    time_steps = (last_time_step / steps) * np.arange(steps)
     print("Final reward: ", average_reward_list[-1])
     plt.plot(time_steps, average_reward_list)
-    plt.xlabel(f"timesteps averaged over last {average_over_last_steps} steps")
+    plt.xlabel(f"rewards averaged over last {average_over_last_steps} steps"+x_label_additional_info)
     plt.ylabel("mean rewards")
     plt.show()
+
+
+def plot_data(name_of_file=None, calculate_average_each_step=20000, average_over_last_steps=200000,
+              scale_reward=100, only_average=True):
+    time_steps, rewards, time_elapsed = read_file(name_of_file)
+
+    print(f"time_elapsed: {int(float(time_elapsed))} seconds or {int(float(time_elapsed) / 60)} minutes")
+    if not only_average:
+        plt.plot(time_steps, rewards)
+        plt.xlabel("timesteps")
+        plt.ylabel("mean rewards")
+        plt.show()
+
+    average_reward_list = create_average_reward_list(time_steps, rewards, calculate_average_each_step,
+                                                              average_over_last_steps, scale_reward)
+
+    plot_average(average_reward_list, time_steps[-1], average_over_last_steps)
+
+
+def plot_runs(outputs, calculate_average_each_step=20000, average_over_last_steps=200000,
+              scale_reward=100):
+    average_lists = []
+    time_steps = []
+    last_run_length = 0
+    for file_name in outputs:
+        time_steps, rewards, time_elapsed = read_file(file_name)
+        average_reward_list = create_average_reward_list(time_steps, rewards, calculate_average_each_step,
+                                                         average_over_last_steps, scale_reward)
+        average_lists.append(average_reward_list)
+        last_run_length = len(average_reward_list)
+    for i in range(len(average_lists)):
+        average_lists[i] = average_lists[i][:last_run_length]
+    average_lists = np.array(average_lists)
+    average_of_all_runs = np.mean(average_lists, axis=0)
+    variance_of_all_runs = np.var(average_lists, axis=0)
+    last_time_step = time_steps[-1]
+
+    steps = len(average_of_all_runs)
+    time_steps = (last_time_step / steps) * np.arange(steps)
+    lower_bound = average_of_all_runs - variance_of_all_runs
+    upper_bound = average_of_all_runs + variance_of_all_runs
+    plt.fill_between(time_steps, lower_bound, upper_bound, alpha=0.5)
+
+    plot_average(average_of_all_runs, last_time_step, average_over_last_steps, f" over {len(average_lists)} runs")
 
 
 if __name__ == "__main__":
     plot_data()
+    # plot_runs(["output04-06-2021-17-29-07.txt", "output04-06-2021-23-01-04.txt", "output04-07-2021-04-04-57.txt"])
