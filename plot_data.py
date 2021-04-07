@@ -87,7 +87,7 @@ def plot_average(average_reward_list, last_time_step, average_over_last_steps, x
     plt.show()
 
 
-def plot_data(name_of_file=None, calculate_average_each_step=20000, average_over_last_steps=200000,
+def plot_data(name_of_file=None, calculate_average_each_step=20000, average_over_last_steps=100000,
               scale_reward=100, only_average=True):
     time_steps, rewards, time_elapsed = read_file(name_of_file)
 
@@ -98,8 +98,8 @@ def plot_data(name_of_file=None, calculate_average_each_step=20000, average_over
         plt.ylabel("mean rewards")
         plt.show()
 
-    average_reward_list = np.array(create_average_reward_list(time_steps, rewards, calculate_average_each_step,
-                                                              average_over_last_steps, scale_reward)) * scale_reward
+    average_reward_list = create_average_reward_list(time_steps, rewards, calculate_average_each_step,
+                                                              average_over_last_steps, scale_reward)
 
     plot_average(average_reward_list, time_steps[-1], average_over_last_steps)
 
@@ -133,4 +133,4 @@ def plot_runs(outputs, calculate_average_each_step=20000, average_over_last_step
 
 if __name__ == "__main__":
     plot_data()
-    # plot_runs(["output04-06-2021-17-29-07.txt", "output04-06-2021-23-01-04.txt", "output04-07-2021-04-04-57.txt"])
+    # plot_runs(["output04-06-2021-17-29-07.txt", "output04-06-2021-23-01-04.txt", "output04-07-2021-04-04-57.txt"], average_over_last_steps=300000)
