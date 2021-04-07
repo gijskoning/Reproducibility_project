@@ -35,13 +35,12 @@ class IAMPolicy(nn.Module):
             if self.IAM:
                 print("Using IAMBase")
                 base = IAMBase
+            elif self.recurrent:
+                print("Using RNNBase")
+                base = RNNBase
             else:
-                if self.recurrent:
-                    print("Using RNNBase")
-                    base = RNNBase
-                else:
-                    print("Using MLPBase")
-                    base = MLPBase
+                print("Using MLPBase")
+                base = MLPBase
         else:
             raise NotImplementedError
         self.base = base(obs_shape[0], **base_kwargs)
@@ -347,8 +346,8 @@ class IAMBaseCNN(IAMBase):
 
 
 class RNNBase(NNBase):
-    def __init__(self, num_inputs, recurrent=False, hidden_sizes=(64, 64), recurrent_hidden_size=128):
-        super(RNNBase, self).__init__(recurrent, hidden_sizes[-1], recurrent_hidden_size)
+    def __init__(self, num_inputs, recurrent=False, hidden_sizes=(64, 64), rnn_hidden_size=128):
+        super(RNNBase, self).__init__(recurrent, hidden_sizes[-1], rnn_hidden_size)
 
         init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.
                                constant_(x, 0), np.sqrt(2))
@@ -357,8 +356,7 @@ class RNNBase(NNBase):
 
         self.critic_rnn = self._create_gru(num_inputs, self._recurrent_hidden_size)
 
-        self.critic_linear = init_(nn.Linear(self.output_size()[-1], 1))
-
+        self.critic_linear = init_(nn.Linear(self.output_size(), 1))
 
         self.train()
 
