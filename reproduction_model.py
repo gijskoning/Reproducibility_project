@@ -347,7 +347,7 @@ class IAMBaseCNN(IAMBase):
 
 
 class RNNBase(NNBase):
-    def __init__(self, num_inputs, recurrent=False, hidden_sizes=(64, 64), recurrent_hidden_size=128):
+    def __init__(self, num_inputs, recurrent=True, hidden_sizes=(64, 64), recurrent_hidden_size=128):
         super(RNNBase, self).__init__(recurrent, hidden_sizes[-1], recurrent_hidden_size)
 
         init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.
@@ -358,7 +358,6 @@ class RNNBase(NNBase):
         self.critic_rnn = self._create_gru(num_inputs, self._recurrent_hidden_size)
 
         self.critic_linear = init_(nn.Linear(self.output_size()[-1], 1))
-
 
         self.train()
 
