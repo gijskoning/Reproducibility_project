@@ -17,11 +17,12 @@ class IAMPolicy(nn.Module):
     This class contains the reproduction Policy model.
     """
 
-    def __init__(self, obs_shape, action_space, IAM=False, base_kwargs=None):
+    def __init__(self, obs_shape, action_space, IAM=False, RNN=False, base_kwargs=None):
         super(IAMPolicy, self).__init__()
         if base_kwargs is None:
             base_kwargs = {}
         self.IAM = IAM
+        self.recurrent = RNN
 
         if len(obs_shape) == 3:
             if self.IAM:
@@ -35,8 +36,12 @@ class IAMPolicy(nn.Module):
                 print("Using IAMBase")
                 base = IAMBase
             else:
-                print("Using MLPBase")
-                base = MLPBase
+                if self.recurrent:
+                    print("Using RNNBase")
+                    base = RNNBase
+                else:
+                    print("Using MLPBase")
+                    base = MLPBase
         else:
             raise NotImplementedError
         self.base = base(obs_shape[0], **base_kwargs)
@@ -240,8 +245,9 @@ class MLPBase(NNBase):
     def forward(self, inputs, rnn_hxs, masks):
         x = inputs
 
-        if self.is_recurrent:
-            x, rnn_hxs = self._forward_gru(x, rnn_hxs, masks)
+        # This is not used
+        # if self.is_recurrent:
+        #     x, rnn_hxs = self._forward_gru(x, rnn_hxs, masks)
 
         hidden_critic = self.critic_fnn(x)
         hidden_actor = self.actor_fnn(x)
@@ -339,3 +345,42 @@ class IAMBaseCNN(IAMBase):
 
         return super(IAMBaseCNN, self).forward(processed_input, rnn_hxs, masks)
 
+
+class RNNBase(NNBase):
+    def __init__(self, num_inputs, recurrent=False, hidden_sizes=(64, 64), recurrent_hidden_size=128):
+        super(RNNBase, self).__init__(recurrent, hidden_sizes[-1], recurrent_hidden_size)
+
+        init_ = lambda m: init(m, nn.init.orthogonal_, lambda x: nn.init.
+                               constant_(x, 0), np.sqrt(2))
+
+        self.actor_rnn = self._create_gru(num_inputs, self._recurrent_hidden_size)
+
+        self.critic_rnn = self._create_gru(num_inputs, self._recurrent_hidden_size)
+
+        self.critic_linear = init_(nn.Linear(hidden_sizes[-1], 1))
+
+        self.train()
+
+    def forward(self, inputs, rnn_hxs, masks):
+        x = inputs
+
+        left_rnn_hxs, right_rnn_hxs = rnn_hxs.split(self._recurrent_hidden_size, 1)
+
+        hidden_critic_rnn, left_rnn_hxs = \
+            self._forward_gru(x, left_rnn_hxs, masks, self.actor_rnn)
+
+        hidden_actor_rnn, right_rnn_hxs = \
+            self._forward_gru(x, right_rnn_hxs, masks, self.critic_rnn)
+
+        rnn_hxs = torch.cat([left_rnn_hxs, right_rnn_hxs], 1)
+
+        return self.critic_linear(hidden_critic_rnn), hidden_actor_rnn, rnn_hxs
+
+    @property
+    def recurrent_hidden_state_size(self):
+        # Changed this! Before it was self._hidden_size
+        # Do this hack multiplying by such that one half is used by the critic network and the other by the actor.
+        return self._recurrent_hidden_size * 2
+
+    def output_size(self):
+        return self._recurrent_hidden_size

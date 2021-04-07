@@ -43,6 +43,7 @@ def create_IAM_model(envs, args, parameters):
         obs_shape=envs.observation_space.shape,
         action_space=envs.action_space,
         IAM=parameters['influence'],
+        RNN=parameters['recurrent'],
         base_kwargs=base_kwargs)
     return actor_critic
 
@@ -246,7 +247,7 @@ class Main:
                 output = ''.join([str(x) + ',' for x in data])
                 self.data_saver.append(output)
                 print(
-                    f"Updates {data[0]}, num timesteps {data[1]}, FPS {data[2]}, elapsed time {int(data[11])} sec \n Last {data[3]} training episodes: mean/median reward {data[4]:.2f}/{data[5]:.2f}, min/max reward {data[6]:.1f}/{data[7]:.1f}\n")
+                    f"Updates {data[0]}, num timesteps {data[1]}, FPS {data[2]}, elapsed time {int(data[11])} sec. Last {data[3]} training episodes: mean/median reward {data[4]:.2f}/{data[5]:.2f}, min/max reward {data[6]:.1f}/{data[7]:.1f}", end="\r")
 
             if (args.eval_interval is not None and len(episode_rewards) > 1
                     and j % args.eval_interval == 0):

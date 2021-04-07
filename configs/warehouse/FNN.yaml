@@ -2,13 +2,13 @@ parameters:
     # Common hyperparameters
     name: 'FNN_warehouse'
     env_type: 'warehouse'
-    num_frames: 32
+    num_frames: 8
     # MAIN MODEL
 #    num_fc_units: [640, 256] # param not used
     # Convolutional module
     convolutional: false # param not used
     # Recurrent module
-    recurrent: false # param not used
+    recurrent: false
 
     # INFLUENCE MODEL
     influence: false
