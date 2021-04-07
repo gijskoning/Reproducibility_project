@@ -87,7 +87,7 @@ def plot_average(average_reward_list, last_time_step, average_over_last_steps, x
     plt.show()
 
 
-def plot_data(name_of_file=None, calculate_average_each_step=20000, average_over_last_steps=100000,
+def plot_data(name_of_file=None, calculate_average_each_step=20000, average_over_last_steps=200000,
               scale_reward=100, only_average=True):
     time_steps, rewards, time_elapsed = read_file(name_of_file)
 
