@@ -166,7 +166,7 @@ def get_args(optional_args=None):
         help='List of FNN hidden sizes')
     args = parser.parse_args(optional_args)
     args.fnn_hidden_sizes = list(map(int, args.fnn_hidden_sizes.split(',')))
-    args.cuda = not args.cuda_deterministic and torch.cuda.is_available()
+    args.cuda = args.cuda_deterministic and torch.cuda.is_available()
 
     assert args.algo in ['a2c', 'ppo', 'acktr']
     if args.recurrent_policy:
