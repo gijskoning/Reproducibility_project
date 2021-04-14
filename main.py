@@ -101,7 +101,7 @@ class Main:
         actor_critic = create_IAM_model(envs, args, self.config_parameters)
         actor_critic.to(device)
         # summary of the network
-        summary(actor_critic.base, [envs.observation_space.shape, (actor_critic.recurrent_hidden_state_size,), (args.num_processes,)], device='cpu')  # (in_channels, height, width)
+        # summary(actor_critic.base, [envs.observation_space.shape, (actor_critic.recurrent_hidden_state_size,), (args.num_processes,)], device='cpu')  # (in_channels, height, width)
 
         if args.algo == 'a2c':
             agent = algo.A2C_ACKTR(
