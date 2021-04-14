@@ -11,6 +11,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from torchsummary import summary
 
 from a2c_ppo_acktr import algo, utils
 from a2c_ppo_acktr.algo import gail
@@ -98,6 +99,9 @@ class Main:
         # actor_critic = create_default_model(envs, args)
         actor_critic = create_IAM_model(envs, args, self.config_parameters)
         actor_critic.to(device)
+        # summary of the network
+        summary(actor_critic.base, [envs.observation_space.shape, (actor_critic.recurrent_hidden_state_size,), (args.num_processes,)], device='cpu')  # (in_channels, height, width)
+
         if args.algo == 'a2c':
             agent = algo.A2C_ACKTR(
                 actor_critic,

@@ -4,7 +4,7 @@ parameters:
     env_type: 'warehouse'
     num_frames: 8
     # MAIN MODEL
-    num_fc_units: [640, 256] # param not used
+#    num_fc_units: [640, 256] # param not used
     # Convolutional module
     convolutional: false # param not used
     # Recurrent module
