@@ -7,11 +7,6 @@ The model will be evaluated using the PPO algorithm retrieved from: https://gith
 Currently, the code is a work in progress and is only a not working copy of the tensorflow one.
 
 ## Executing the code
-Currently the model can be tested using the environments:  
-PongNoFrameskip-v4 (for quicker testing the num-processes is decreased from 8 to 1)
-```
-python main.py --env-name "PongNoFrameskip-v4" --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 0.5 --num-processes 1 --num-steps 128 --num-mini-batch 4 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01
-```
 The Warehouse environment included in the code of the paper.
 *Todo the hyperparameter are not yet correct!*
 Currently these parameters are correct: 
@@ -23,21 +18,15 @@ Also not sure if value coeff is the same as value-loss-coef. Previously in the P
 Next to that I am not sure if num workers is equal to num-steps. num-steps equal to 3 doesn't actually work for 8 workers.
 
 *Use --num-processes 2 --num-steps 16 when low on memory*
+Warehouse with FNN
 ```
-python main.py --env-name Warehouse --yaml-file IAM_static --fnn-hidden-sizes 512,256 --rec-hidden-size 128 --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01 --cuda-deterministic
+python main.py --env-name Warehouse --yaml-file FNN --fnn-hidden-sizes 640,256  --num-processes 8 --num-steps 8 --num-mini-batch 32 --log-interval 100 --use-linear-lr-decay --entropy-coef 0.01 --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1
 ```
-With recursion:
+Warehouse with IAM network:
 ```
-python main.py --env-name Warehouse --yaml-file IAM_static --fnn-hidden-sizes 512,256 --rec-hidden-size 128 --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01 --recurrent-policy --cuda-deterministic
+python main.py --env-name Warehouse --yaml-file IAM_static --fnn-hidden-sizes 512,256 --rec-hidden-size 128 --recurrent-policy --num-processes 8 --num-steps 8 --num-mini-batch 32 --log-interval 100 --use-linear-lr-decay --entropy-coef 0.01 --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1
 ```
-With recursion and extra parameters specified by the yml files in the config directory:
-```
-python main.py --env-name Warehouse --yaml-file IAM_static --fnn-hidden-sizes 512,256 --rec-hidden-size 128 --recurrent-policy --num-processes 8 --num-steps 8 --num-mini-batch 8 --log-interval 30 --use-linear-lr-decay --entropy-coef 0.01 --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1
-```
-Traffic lights aka Sumo (Currently not used)
-```
-python main.py --env-name Sumo --algo ppo --use-gae --lr 2.5e-4 --clip-param 0.1 --value-loss-coef 1 --num-processes 8 --num-steps 4 --num-mini-batch 32 --log-interval 5 --use-linear-lr-decay --entropy-coef 0.01 --cuda-deterministic
-```
+
 ## Additional installation instructions
 Preferably you use Pytorch with Cuda enabled but this requires a special version. To check your Cuda version (if installed) execute 
 this command in cmd.exe: `nvcc --version`  
