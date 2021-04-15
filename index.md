@@ -31,8 +31,16 @@ A couple of adjustments have been made to get the environment working with the P
 *Did use a different epoch of 4 instead of 3 by accident*
 
 ## IAM model
+The basic IAM model for the Warehouse environment uses an FNN and GRU in parallel. The hidden sizes 
+## Other configurations
+Since we use a different PPO model as the original paper, to compare the results correctly the baselines used in the paper are also implemented.
+These were:
+- Single FNN
+- Single GRU
+## CNN variant
 # Results
 <!--Erik-->
+<!--Zou je misschien kunnen kijken hoe we een legenda kunnen toevoegen aan de plots?-->
 
 *Focused on reproducing Figure 5 of the paper
 Minibatch of 8 with four different models
