@@ -23,22 +23,29 @@ and our implementation 4. This can affect the output, but we are not comparing t
 ### PPO algorithm
 The author implemented his own PPO algorithm, we choose to use an algorithm based on OpenAi PPO from this [repo](https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail.).
 The code already had some structure for a recurrent network namely the GRU, this why we created our IAM with a GRU instead of an LSTM. 
-Using the GRU will change the results compared to the paper but we can still relate the performance of the IAM model to a single GRU.
+Using the GRU will change the results compared to the paper, but we can still relate the performance of the IAM model to a single GRU.
 ### Warehouse
-The Warehouse environment is created by the author himself. Fortunately, his code is available on Github, and so we could easily copy the environment.
+The Warehouse environment is created by the author himself. It contains one agent in a 7x7 grid which needs to collect items at boundaries of the grid to receive a reward.
+These items appear at random and disapppear after 8 seconds so the model needs some kind of memory to save this information for multiple timesteps.  
+
+![image](page/images/warehouse.png)  
+*Warehouse visualization. (blue) agent, (yellow) items.*
+
+Fortunately, the code is available on Github, and so we could easily copy the environment.
 The environment is also clearly explained in the paper, so we could have created it ourselves.
 
 Two small adjustments have been made to get the environment working with the PPO algorithm:
 - The observation space property with the correct output was added
 - Metadata property set to None
 
-[comment]: <> (*Did use a different epoch of 4 instead of 3 by accident*)
+
 
 ## IAM model
 As described in the paper the basic IAM model for the Warehouse environment uses an FNN and GRU in parallel. 
 The paper didn't explain how the IAM model was used in the PPO algorithm. This is an important detail since the algorithm uses an actor and critic model, and these can be used in different combinations. 
-For example parts of the model used in the actor and critic can be shared. We decided to use two instances of the IAM model, one actor and one critic.
-
+For example parts of the model used in the actor and critic can be shared or completely separate. We decided to use two instances of the IAM model, one as actor and one as critic.  
+![image](page/images/iam_model.png)  
+*Diagram of the IAM model from Figure 3 of the paper.*
 ### Baselines
 Since we use a different PPO model as the original paper, to compare the results correctly,
 the baselines used in the paper are also implemented, again using two instances of the model for actor and critic:
@@ -73,9 +80,9 @@ But as also discussed earlier the paper does miss some important details.
 When creating the plots of our result and comparing it to Figure 5 of the paper, we noticed that we need some additional information on how the graphs were created in the paper.
 These are the scale of the reward (can be guessed to be multiplied by 100), 
 the amount of timesteps used in the rolling average and
-how many training runs where done. Luckily, the author replied quickly to our emails to give this additional information.
+how many training runs where done. Luckily, the author replied quickly to our emails to give this additional information and this adds to the reproducibility factor as is mentioned here .
 
-
+*To be done:*
 Some inconsistencies when comparing the paper and the appendix about the observations used. 8 or 32.
 We didn’t find out what time horizon meant as parameter*
 The author doesn't matter if the LSTM is used for the RNN. (I think)
