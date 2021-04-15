@@ -57,16 +57,24 @@ Minibatch of 32 for just GRU and IAM again showing better results. We ran a mini
 
 The paper claimed that GRU or LSTM are less stable but actually our results show that GRU is very stable.*
 
+Figure 5 of the paper:  
+![image](page/images/paper_figure5.png)
+
 # Reproducibility
 <!--Gijs-->
+Overall, using the information from the paper was sufficient to implement the model described. 
+But as also discussed earlier the paper does miss some important details.
 
-*Missing parameters:
-3 runs to determine variations
-scale parameter
-average done over number of steps
+When creating the graphs of our result and comparing it to Figure 5 of the paper, we noticed that we need some additional information on how the graphs were created in the paper.
+These were the scale of the reward (can be guessed to be multiplied by 100), 
+the amount of timesteps used in the rolling average and
+how many training runs where done. 
+
+
 Some inconsistencies when comparing the paper and the appendix about the minibatch
 We didn’t find out what time horizon meant as parameter*
 The author doesn't matter if the LSTM is used for the RNN. (I think)
+*Author doesnt mention the absolute training time*
 # Conclusion
 <!--Gijs-->
 
@@ -75,5 +83,5 @@ However we got different results compared to the paper, IAM gave in our case not
 
 # Links
 Authors implementation: https://github.com/INFLUENCEorg/influence-aware-memory  
-Paper: https://arxiv.org/pdf/1911.07643.pdf
+Paper: https://arxiv.org/pdf/1911.07643.pdf  
 PPO implementation used: https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail
