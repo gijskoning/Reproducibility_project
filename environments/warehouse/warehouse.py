@@ -39,7 +39,6 @@ class Warehouse(object):
         self.items = []
         self.img = None
 
-        # self.reward_range = 1
         self.metadata = None
         self.observation_minmax = np.zeros(2)
 
