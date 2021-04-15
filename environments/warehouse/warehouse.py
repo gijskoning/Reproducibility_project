@@ -39,9 +39,8 @@ class Warehouse(object):
         self.items = []
         self.img = None
 
-        # todo temp for gym adaptation
-        self.reward_range = 1
-        self.metadata = 2
+        # self.reward_range = 1
+        self.metadata = None
         self.observation_minmax = np.zeros(2)
 
         # self.reset()
@@ -109,18 +108,6 @@ class Warehouse(object):
         manually selected, the RNN in IAM only receives the latter
         variables while the FNN processes the entire vector.
         """
-        # todo need to fix observation space
-        # The observation space consists\
-        # PPO algorithm
-        # space = spaces.MultiBinary([self.parameters['num_frames']*(49+24)])
-        # todo not sure if agent and item space are in correct order here
-        # agent_position_space = spaces.Box(0, 1, (self.parameters['num_frames'] * (49),), dtype=int)
-        # item_space = spaces.Box(0, 9, (self.parameters['num_frames'] * (24),), dtype=int)
-        # return flatten_space(space)
-        # for _ in range(self.parameters['num_frames']):
-        # flatten = spaces.flatten_space(
-        #     spaces.Dict({'position_one_hot_vector': agent_position_space, 'item_space': item_space}))
-        # different way of creating the observation space
         flatten = spaces.Box(0, 1, (self.parameters['num_frames'] * (49+24),), dtype=int)
 
         return flatten
@@ -255,10 +242,6 @@ class Warehouse(object):
         """
         state = self._get_state()
         observation = self.robots[self.learning_robot_id].observe(state, self.obs_type)
-        # self.observation_minmax[0] = np.maximum(observation.max(), self.observation_minmax[1])
-        # self.observation_minmax[1] = np.minimum(observation.min(), self.observation_minmax[0])
-        # print("self.observation_minmax", self.observation_minmax)
-        # print("observation", observation)S
         return observation
 
     def _robots_act(self, actions):

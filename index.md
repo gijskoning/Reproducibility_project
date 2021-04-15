@@ -1,16 +1,39 @@
 # Introduction
+<!--Erik-->
+
 *Write about Reinforcement learning*
 *What the author wanted to achieve*
 *How the environment works*
 
 # The design of IAM
+<!--Erik-->
+
 # Implementation in Pytorch
+<!--Gijs-->
+The IAM model for the Warehouse environment is relatively simple to create. 
+However, some information in the paper is missing which took more time to figure out.
+In short, we have taken these steps to reproduce the paper: Selecting a similar PPO algorithm, 
+adapting the Warehouse environment to work with OpenAI Gym and
+combine a FNN with GRU in parallel to create the IAM model.
+
+## PPO algorithm
+The author implemented his own PPO algorithm, we choose to use an algorithm based on OpenAi PPO from this [repo](https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail.).
+The code already had some structure for a recurrent network namely the GRU, this why we created our IAM with a GRU instead of an LSTM. 
+## Warehouse
+The Warehouse environment is created by the Author himself. Fortunately, his code is available, and so we could easily copy the environment. 
+A couple of adjustments have been made to get the environment working with the PPO algorithm:
+- The observation space property with the correct output was added
+- Metadata property set to None
+
 *GRU with FNN. GRU was already available in the implementation*
 *Copied model for critic and actor*
 *Used this PPO algorithm https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail as the author used a similar algorithm*
 *Did use a different epoch of 4 instead of 3 by accident*
 
+## IAM model
 # Results
+<!--Erik-->
+
 *Focused on reproducing Figure 5 of the paper
 Minibatch of 8 with four different models
 ![image](page/images/minibatch8.png)
@@ -25,14 +48,18 @@ Minibatch of 32 for just GRU and IAM again showing better results. We ran a mini
 The paper claimed that GRU or LSTM are less stable but actually our results show that GRU is very stable.*
 
 # Reproducibility
+<!--Gijs-->
+
 *Missing parameters:
 3 runs to determine variations
 scale parameter
 average done over number of steps
 Some inconsistencies when comparing the paper and the appendix about the minibatch
 We didn’t find out what time horizon meant as parameter*
-
+The author doesn't matter if the LSTM is used for the RNN. (I think)
 # Conclusion
+<!--Gijs-->
+
 *Overall the paper was good reproducible. And we want to note that the author gave feedback very quickly which adds to the reproducibility factor. 
 However we got different results compared to the paper, IAM gave in our case not the best results, but the FNN with one observation did.*
 

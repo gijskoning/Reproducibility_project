@@ -35,6 +35,4 @@ class LoopNetwork(SumoGymAdapter):
         if parameters is not None:
             _parameters.update(parameters) # load parameters given by the user
         super().__init__(_parameters, seed)
-        # todo temp for gym adaptation
-        self.reward_range = 2
         self.metadata = 2
