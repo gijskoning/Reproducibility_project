@@ -19,25 +19,27 @@ combine a FNN with GRU in parallel to create the IAM model.
 ## PPO algorithm
 The author implemented his own PPO algorithm, we choose to use an algorithm based on OpenAi PPO from this [repo](https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail.).
 The code already had some structure for a recurrent network namely the GRU, this why we created our IAM with a GRU instead of an LSTM. 
+Using the GRU will change the results compared to the paper but we can still relate the performance of the IAM model to a single GRU.
 ## Warehouse
-The Warehouse environment is created by the Author himself. Fortunately, his code is available, and so we could easily copy the environment. 
-A couple of adjustments have been made to get the environment working with the PPO algorithm:
+The Warehouse environment is created by the author himself. Fortunately, his code is available on Github, and so we could easily copy the environment.
+The environment is also clearly explained in the paper, so we could have created it ourselves.
+
+Two small adjustments have been made to get the environment working with the PPO algorithm:
 - The observation space property with the correct output was added
 - Metadata property set to None
 
-*GRU with FNN. GRU was already available in the implementation*
-*Copied model for critic and actor*
-*Used this PPO algorithm https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail as the author used a similar algorithm*
-*Did use a different epoch of 4 instead of 3 by accident*
+[comment]: <> (*Did use a different epoch of 4 instead of 3 by accident*)
 
 ## IAM model
-The basic IAM model for the Warehouse environment uses an FNN and GRU in parallel. The hidden sizes 
-## Other configurations
-Since we use a different PPO model as the original paper, to compare the results correctly the baselines used in the paper are also implemented.
-These were:
-- Single FNN
-- Single GRU
-## CNN variant
+As described in the paper the basic IAM model for the Warehouse environment uses an FNN and GRU in parallel. 
+The paper didn't explain how the IAM model was used in the PPO algorithm. This is an important detail since the algorithm uses an actor and critic model, and these can be used in different combinations. 
+For example parts of the model used in the actor and critic can be shared. We decided to use two instances of the IAM model, one actor and one critic.
+
+### Baselines
+Since we use a different PPO model as the original paper, to compare the results correctly, the baselines used in the paper are also implemented:
+- A single FNN of two layers with one or eight observations as input.
+- A single GRU.
+
 # Results
 <!--Erik-->
 <!--Zou je misschien kunnen kijken hoe we een legenda kunnen toevoegen aan de plots?-->
@@ -74,3 +76,4 @@ However we got different results compared to the paper, IAM gave in our case not
 # Links
 Authors implementation: https://github.com/INFLUENCEorg/influence-aware-memory  
 Paper: https://arxiv.org/pdf/1911.07643.pdf
+PPO implementation used: https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail
