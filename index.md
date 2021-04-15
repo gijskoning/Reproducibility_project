@@ -1,5 +1,3 @@
-![image](poster.png)
-
 # Introduction
 *Write about Reinforcement learning*
 *What the author wanted to achieve*

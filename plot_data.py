@@ -93,7 +93,7 @@ def plot_data(name_of_file=None, calculate_average_each_step=20000, average_over
     time_steps, rewards, time_elapsed = read_file(name_of_file)
 
     print(f"time_elapsed: {int(float(time_elapsed))} seconds or {int(float(time_elapsed) / 60)} minutes")
-    if not only_average:
+    if not only_average and show:
         plt.plot(time_steps, rewards)
         plt.xlabel("timesteps")
         plt.ylabel("mean rewards")
