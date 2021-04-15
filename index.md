@@ -37,6 +37,5 @@ We didn’t find out what time horizon meant as parameter*
 However we got different results compared to the paper, IAM gave in our case not the best results, but the FNN with one observation did.*
 
 # Links
-Our implementation: https://github.com/gijskoning/Reproducibility_project  
 Authors implementation: https://github.com/INFLUENCEorg/influence-aware-memory  
 Paper: https://arxiv.org/pdf/1911.07643.pdf
