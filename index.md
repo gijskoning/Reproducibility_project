@@ -15,10 +15,15 @@
 # Results
 *Focused on reproducing Figure 5 of the paper
 Minibatch of 8 with four different models
+![image](page/images/minibatch8.png)
+
+
 Notice that FNN 1 obs gives the best results.
 We do see that FNN 8 obs performs worse just as in the paper.
 FNN 1,8 and GRU on average took less than 4 hours. While IAM took 5 hours.
 Minibatch of 32 for just GRU and IAM again showing better results. We ran a minibatch of 32 after we found out we could run it on Linux with 32 processes
+![image](page/images/minibatch32.png)
+
 The paper claimed that GRU or LSTM are less stable but actually our results show that GRU is very stable.*
 
 # Reproducibility
