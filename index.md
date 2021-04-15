@@ -16,11 +16,15 @@ In short, we have taken these steps to reproduce the paper: Selecting a similar 
 adapting the Warehouse environment to work with OpenAI Gym and
 combine a FNN with GRU in parallel to create the IAM model.
 
-## PPO algorithm
+Our parameters should be the same as in the paper following the default PPO settings. 
+However, after generating all the results we found out that the paper uses a ppo epoch of 3
+and our implementation 4. This can affect the output, but we are not comparing the absolute results, only the relative results to the baselines so this should not be a problem.
+
+### PPO algorithm
 The author implemented his own PPO algorithm, we choose to use an algorithm based on OpenAi PPO from this [repo](https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail.).
 The code already had some structure for a recurrent network namely the GRU, this why we created our IAM with a GRU instead of an LSTM. 
 Using the GRU will change the results compared to the paper but we can still relate the performance of the IAM model to a single GRU.
-## Warehouse
+### Warehouse
 The Warehouse environment is created by the author himself. Fortunately, his code is available on Github, and so we could easily copy the environment.
 The environment is also clearly explained in the paper, so we could have created it ourselves.
 
@@ -36,7 +40,8 @@ The paper didn't explain how the IAM model was used in the PPO algorithm. This i
 For example parts of the model used in the actor and critic can be shared. We decided to use two instances of the IAM model, one actor and one critic.
 
 ### Baselines
-Since we use a different PPO model as the original paper, to compare the results correctly, the baselines used in the paper are also implemented:
+Since we use a different PPO model as the original paper, to compare the results correctly,
+the baselines used in the paper are also implemented, again using two instances of the model for actor and critic:
 - A single FNN of two layers with one or eight observations as input.
 - A single GRU.
 
@@ -65,13 +70,13 @@ Figure 5 of the paper:
 Overall, using the information from the paper was sufficient to implement the model described. 
 But as also discussed earlier the paper does miss some important details.
 
-When creating the graphs of our result and comparing it to Figure 5 of the paper, we noticed that we need some additional information on how the graphs were created in the paper.
-These were the scale of the reward (can be guessed to be multiplied by 100), 
+When creating the plots of our result and comparing it to Figure 5 of the paper, we noticed that we need some additional information on how the graphs were created in the paper.
+These are the scale of the reward (can be guessed to be multiplied by 100), 
 the amount of timesteps used in the rolling average and
-how many training runs where done. 
+how many training runs where done. Luckily, the author replied quickly to our emails to give this additional information.
 
 
-Some inconsistencies when comparing the paper and the appendix about the minibatch
+Some inconsistencies when comparing the paper and the appendix about the observations used. 8 or 32.
 We didn’t find out what time horizon meant as parameter*
 The author doesn't matter if the LSTM is used for the RNN. (I think)
 *Author doesnt mention the absolute training time*
