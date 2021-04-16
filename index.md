@@ -70,8 +70,8 @@ Minibatch of 32 for just GRU and IAM again showing better results. We ran a mini
 
 The paper claimed that GRU or LSTM are less stable but actually our results show that GRU is very stable.*
 
-Figure 5 of the paper:  
 ![image](page/images/paper_figure5.png)
+*Figure 5 of the paper*
 
 # Reproducibility
 <!--Gijs-->
