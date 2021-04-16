@@ -136,9 +136,6 @@ class NNBase(nn.Module):
         return self._hidden_size
 
     def _forward_gru(self, x, hxs, masks, gru=None):
-        # if gru is None:
-        # Not used in the IAM model
-        # gru = self.gru
 
         if x.size(0) == hxs.size(0):
             x, hxs = gru(x.unsqueeze(0), (hxs * masks).unsqueeze(0))

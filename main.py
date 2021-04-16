@@ -46,6 +46,10 @@ def create_IAM_model(envs, args, parameters):
         IAM=parameters['influence'],
         RNN=parameters['recurrent'],
         base_kwargs=base_kwargs)
+    # summary of the network
+    summary(actor_critic.base,
+            [envs.observation_space.shape, (actor_critic.recurrent_hidden_state_size,), (1,)],
+            device='cpu')
     return actor_critic
 
 
@@ -97,11 +101,8 @@ class Main:
         envs = make_vec_envs(args.env_name, self.config_parameters, args.seed, args.num_processes,
                              args.gamma, args.log_dir, device, False)
 
-        # actor_critic = create_default_model(envs, args)
         actor_critic = create_IAM_model(envs, args, self.config_parameters)
         actor_critic.to(device)
-        # summary of the network
-        # summary(actor_critic.base, [envs.observation_space.shape, (actor_critic.recurrent_hidden_state_size,), (args.num_processes,)], device='cpu')  # (in_channels, height, width)
 
         if args.algo == 'a2c':
             agent = algo.A2C_ACKTR(
