@@ -84,11 +84,16 @@ Two small adjustments have been made to get the environment working with the PPO
 - The observation space property with the correct output was added
 - Metadata property set to None
 
-
 ## IAM model
 As described in the paper the basic IAM model for the Warehouse environment uses an FNN and GRU in parallel. 
 The paper didn't explain how the IAM model was used in the PPO algorithm. This is an important detail since the algorithm uses an actor and critic model, and these can be used in different combinations. 
 For example parts of the model used in the actor and critic can be shared or completely separate. We decided to use two instances of the IAM model, one as actor and one as critic.  
+
+### D-set
+We looked at how to implement the d-set functionality of the model. 
+We did this by reducing the size of the RNN to one layer of 25 parameters. 
+This increased the training speed. But we saw no real increase in performance. 
+As the d-set mainly impacts dynamic environments we left this out of the model we used in our experiments. 
 
 ### Baselines
 Since we use a different PPO model as the original paper, to compare the results correctly,
@@ -100,21 +105,56 @@ the baselines used in the paper are also implemented, again using two instances 
 <!--Erik-->
 <!--Zou je misschien kunnen kijken hoe we een legenda kunnen toevoegen aan de plots?-->
 
-*Focused on reproducing Figure 5 of the paper
-Minibatch of 8 with four different models
-![image](page/images/minibatch8.png)
+With the experiments, we mainly focused on reproducing Figure [5](#fig5) of the paper  . 
+In this figure, we can see the training graphs of different models. 
+As explained in the design section the paper uses LSTM in the IAM this is also what it is compared against. 
+The other two horizontal lines are the FNN’s with different setting for the observations. 
+We chose this graph because is it gave a clear comparison between the proposed model plus others and because it used the warehouse environment, for which we also had a good working implementation.
 
-
-Notice that FNN 1 obs gives the best results.
-We do see that FNN 8 obs performs worse just as in the paper.
-FNN 1,8 and GRU on average took less than 4 hours. While IAM took 5 hours.
-Minibatch of 32 for just GRU and IAM again showing better results. We ran a minibatch of 32 after we found out we could run it on Linux with 32 processes
-![image](page/images/minibatch32.png)
-
-The paper claimed that GRU or LSTM are less stable but actually our results show that GRU is very stable.*
-
-![image](page/images/paper_figure5.png)
+![image](page/images/paper_figure5.png)<a id="fig5"></a> 
 *Figure 5 of the paper*
+
+Below we have two figures that are the results of the reproduced implementation. 
+The first one is with a minibatch of 8 and the other one with 32. 
+The figure of the paper also uses a minibatch of 32. 
+As explained in the implementation section we used GRU as the RNN implementation, so we also compare this to the IAM. 
+
+The experiments were done on a laptop and google cloud server both using linux. 
+Using among other things the torch threads we could run multiple processes, up to 32. 
+The FNN 1,8 and GRU took on average less or around 4 hours, while the IAM took 5 hours on average. 
+
+In the first figure, we notice that the FNN with one observation gives the best result and the FNN 8 the worse. 
+In the second figure, both FNNs give the lowest returns. 
+More interesting is the GRU IAM comparision. 
+We see in both figures that the GRU is doing an overall better job than the IAM model. 
+This is a different result than the paper presents. 
+The paper claimed that the GRU and LSTM are less stable. 
+But if we look at the variance of the GRU in our figures this is not greater than the IAM model. 
+
+The final returns and runtimes are also summed up in the table. 
+
+![image](page/images/minibatch8.png)
+*Minibatch of 8 with four different models*
+
+[comment]: <> (Notice that FNN 1 obs gives the best results.)
+[comment]: <> (We do see that FNN 8 obs performs worse just as in the paper.)
+[comment]: <> (FNN 1,8 and GRU on average took less than 4 hours. While IAM took 5 hours.)
+[comment]: <> (Minibatch of 32 for just GRU and IAM again showing better results. We ran a minibatch of 32 after we found out we could run it on Linux with 32 processes)
+
+![image](page/images/minibatch32.png)
+*Minibatch of 32 with four different models*
+
+
+| Model         | Minibatch     | Average runtime  | Return |
+| ------------- |:-------------:| -----:           |-----:  |
+| GRU           | 8             | 4 hours           | 33.6  |
+| IAM           | 8             | 5 hours           | 30,7  |
+| FNN 1         | 8             | 2 hours 11 min    | 37    |
+| FNN 8         | 8             | 3 hours 49 min    | 28,9  |
+| GRU           | 32            | 3 hours 49 min    | 49,9  |
+| IAM           | 32            | 4 hours 51 min    | 48,2  |
+| FNN 1         | 32            | 3 hours 30 min    | 47,3  |
+| FNN 8         | 32            | 4 hours 15 min    | 45    |
 
 # Reproducibility
 <!--Gijs-->
