@@ -1,9 +1,9 @@
 # Introduction
 <!--Erik-->
-In this blog, we are going to tell about the IAM [^iam-paper] paper and how we tried to reproduce some results of that paper.
+In this blog, we are going to tell about the IAM [[1]](#1) paper and how we tried to reproduce some results of that paper.
 The title of the IAM paper is Influence-aware memory architectures for deep reinforcement learning and authored by Miguel Suau et al.
 The idea of the project was to reimplement the IAM model with a different library and to reproduce some results given in the paper.
-The main idea of the paper is to propose an architecture where the agent has some influence-aware memory (IAM).
+The main idea the paper proposes is an architecture where the agent has some influence-aware memory (IAM).
 The agent makes its decisions based on a reinforcement learning model.
 With this architecture, it is then possible to remember the useful information from the environment while alleviating the training difficulties compare to conventional methods using RNNs.
 The goal of the paper is to show that architecture indeed has an important effect on convergence, learning speed and performance of the agent.
@@ -11,9 +11,10 @@ We reproduced the implementation and repeated some of the experiments described 
 The design of the IAM described will be explained in greater detail in the next section.
 After that, we will dive into our implementation and the results we got from that implementation. 
 At last, we discuss our results in a comparison with that of the paper and give a short conclusion of the project.
-*Write about Reinforcement learning*
-*What the author wanted to achieve*
-*How the environment works*
+
+[comment]: <> (*Write about Reinforcement learning*)
+[comment]: <> (*What the author wanted to achieve*)
+[comment]: <> (*How the environment works*)
 
 # The design of IAM
 As introduced in the introduction the IAM stands for influence aware memory, meaning that the architecture is intended to only remember relevant parts of the environment. 
@@ -27,12 +28,30 @@ This way the agent moves or interacts with its environment and get its rewards.
 This reward tells the agent how good it is performing. 
 The goal of reinforcement learning is to get an agent that gives a high reward i.e. performs well. 
 
-The actual RL algorithm which is used to train the model is PPO. 
+The actual RL algorithm which is used to train the model is the Proximal Policy Optimization (PPO) [[2]](#2). 
 This algorithm focuses on taking the biggest steps possible to improve, without stepping so far that the performance suddenly collapses. 
 
-Now having explained the RL part of the system let’s discuss the IAM model.
+Now having explained the RL part of the system let’s discuss the IAM architecture. 
+This model consists of two main parts, the FNN and an RNN. These two parts are used in parallel, as can be seen in Figure [1](#fig1). 
+The FNN lets all information flow and the RNN is the memory part of the model, together they form the decision of the agent. 
+The RNN is implemented as an LSTM [[3]](#3). 
+Because memorizing all observed variables can be costly or requires unnecessary effort, the RNN is restricted on the information it can memorize. 
+This restriction can be either done by reducing the size of the RNN itself or reducing the observation it receives. 
 
+The paper describes the use of a d-set to reduce the observation information. 
+This set is the information that is relevant to be remembered. 
+The selection operator D which determines the d-set, depicted in Figure [1](#fig1), can be a manual set or learned.
+For environments where the designer can guess the variables which influence the hidden state, the manual option is a viable choice. 
+However for more complex environments, one wants to learn this selection operator. 
+There are two different versions here. 
+The static set and dynamic one. 
+The static set can be used in environments where the interesting parts of the environment do not change over time, while dynamic can be used when they do. 
+For example, when playing pong the ball and players move constantly in the environment. 
+The direction of the ball is relevant to remember, a dynamic selection operator is needed to select the area where the ball is.
+![image](page/images/iam_model.png) <a id="fig1"></a> 
+*Diagram of the IAM model from Figure 3 of the paper.*
 
+With this design, the IAM model aims at good convergence, learning speed and performance of the agent
 # Implementation in Pytorch
 <!--Gijs-->
 The IAM model for the Warehouse environment is relatively simple to create. 
@@ -65,13 +84,11 @@ Two small adjustments have been made to get the environment working with the PPO
 - Metadata property set to None
 
 
-
 ## IAM model
 As described in the paper the basic IAM model for the Warehouse environment uses an FNN and GRU in parallel. 
 The paper didn't explain how the IAM model was used in the PPO algorithm. This is an important detail since the algorithm uses an actor and critic model, and these can be used in different combinations. 
 For example parts of the model used in the actor and critic can be shared or completely separate. We decided to use two instances of the IAM model, one as actor and one as critic.  
-![image](page/images/iam_model.png)  
-*Diagram of the IAM model from Figure 3 of the paper.*
+
 ### Baselines
 Since we use a different PPO model as the original paper, to compare the results correctly,
 the baselines used in the paper are also implemented, again using two instances of the model for actor and critic:
@@ -105,7 +122,7 @@ But as also discussed earlier the paper does miss some important details.
 When creating the plots of our result and comparing it to Figure 5 of the paper, we noticed that information was missing on how the graphs were created in the paper.
 These are the scale of the reward (can be guessed to be multiplied by 100), 
 the amount of timesteps used in the rolling average and
-how many training runs have been used to find the variation. Luckily, the author replied quickly to our emails to give this additional information and this adds to the reproducibility factor as is mentioned here [[1]](#1).
+how many training runs have been used to find the variation. Luckily, the author replied quickly to our emails to give this additional information and this adds to the reproducibility factor as is mentioned here [[4]](#4).
 
 Also, some other inconsistencies were found in the paper and appendix reducing the reproducibility.
 - The observations used in the FNN were different in the paper (8) and the appendix (32).
@@ -131,4 +148,10 @@ PPO implementation used: https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gai
 
 ## References
 <a id="1">[1]</a> 
+Suau, M., Congeduti, E., Starre, R., Czechowski, A., & Oliehoek, F. A. (2019). Influence-aware memory for deep reinforcement learning. arXiv preprint arXiv:1911.07643.\
+<a id="2">[2]</a> 
+Schulman, J., Wolski, F., Dhariwal, P., Radford, A., & Klimov, O. (2017). Proximal policy optimization algorithms. arXiv preprint arXiv:1707.06347.
+<a id="3">[3]</a> 
+Hochreiter, S., & Schmidhuber, J. (1997). Long short-term memory. Neural computation, 9(8), 1735-1780.
+<a id="4">[4]</a> 
 Raff, E. (2019). A Step Toward Quantifying Independently Reproducible Machine Learning Research. NeurIPS.
