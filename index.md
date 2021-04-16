@@ -8,6 +8,7 @@ The agent makes its decisions based on a reinforcement learning model.
 With this architecture, it is then possible to remember the useful information from the environment while alleviating the training difficulties compare to conventional methods using RNNs.
 The goal of the paper is to show that architecture indeed has an important effect on convergence, learning speed and performance of the agent.
 We reproduced the implementation and repeated some of the experiments described in the paper to see if we got some similar results. 
+
 The design of the IAM described will be explained in greater detail in the next section.
 After that, we will dive into our implementation and the results we got from that implementation. 
 At last, we discuss our results in a comparison with that of the paper and give a short conclusion of the project.
