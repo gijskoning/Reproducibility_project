@@ -47,9 +47,9 @@ def create_IAM_model(envs, args, parameters):
         RNN=parameters['recurrent'],
         base_kwargs=base_kwargs)
     # summary of the network
-    summary(actor_critic.base,
-            [envs.observation_space.shape, (actor_critic.recurrent_hidden_state_size,), (1,)],
-            device='cpu')
+    # summary(actor_critic.base,
+    #         [envs.observation_space.shape, (actor_critic.recurrent_hidden_state_size,), (1,)],
+    #         device='cpu')
     return actor_critic
 
 
