@@ -43,7 +43,8 @@ combine a FNN with GRU in parallel to create the IAM model.
 
 Our parameters should be the same as in the paper following the default PPO settings. 
 However, after generating all the results we found out that the paper uses a ppo epoch of 3
-and our implementation 4. This can affect the output, but we are not comparing the absolute results, only the relative results to the baselines so this should not be a problem.
+and our implementation 4. This can affect the output, but we are not comparing the absolute results, only the relative results to the baselines so this is less of a problem.
+Also, our GRU model does not have an FNN as first layer which would have been better for comparison in hindsight.
 
 ### PPO algorithm
 The author implemented his own PPO algorithm, we choose to use an algorithm based on OpenAi PPO from this [repo](https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail.).
@@ -51,7 +52,7 @@ The code already had some structure for a recurrent network namely the GRU, this
 Using the GRU will change the results compared to the paper, but we can still relate the performance of the IAM model to a single GRU.
 ### Warehouse
 The Warehouse environment is created by the author himself. It contains one agent in a 7x7 grid which needs to collect items at boundaries of the grid to receive a reward.
-These items appear at random and disapppear after 8 seconds so the model needs some kind of memory to save this information for multiple timesteps.  
+These items appear at random and disappear after 8 seconds, so the model needs some kind of memory to save this information for multiple timesteps.  
 
 ![image](page/images/warehouse.png)  
 *Warehouse visualization. (blue) agent, (yellow) items.*
@@ -74,8 +75,8 @@ For example parts of the model used in the actor and critic can be shared or com
 ### Baselines
 Since we use a different PPO model as the original paper, to compare the results correctly,
 the baselines used in the paper are also implemented, again using two instances of the model for actor and critic:
-- A single FNN of two layers with one or eight observations as input.
-- A single GRU.
+- A single FNN of two layers with one or eight observations as input. With hidden sizes to be the same as in the paper: 640,256.
+- A single GRU. Containing just one layer of 128 parameters. 
 
 # Results
 <!--Erik-->
@@ -94,31 +95,40 @@ Minibatch of 32 for just GRU and IAM again showing better results. We ran a mini
 
 The paper claimed that GRU or LSTM are less stable but actually our results show that GRU is very stable.*
 
-Figure 5 of the paper:  
 ![image](page/images/paper_figure5.png)
+*Figure 5 of the paper*
 
 # Reproducibility
 <!--Gijs-->
-Overall, using the information from the paper was sufficient to implement the model described. 
-But as also discussed earlier the paper does miss some important details.
-
-When creating the plots of our result and comparing it to Figure 5 of the paper, we noticed that we need some additional information on how the graphs were created in the paper.
+Overall, the information from the paper was sufficient to implement the model described. 
+But as also discussed earlier the paper does miss some important details.  
+When creating the plots of our result and comparing it to Figure 5 of the paper, we noticed that information was missing on how the graphs were created in the paper.
 These are the scale of the reward (can be guessed to be multiplied by 100), 
 the amount of timesteps used in the rolling average and
-how many training runs where done. Luckily, the author replied quickly to our emails to give this additional information and this adds to the reproducibility factor as is mentioned here .
+how many training runs have been used to find the variation. Luckily, the author replied quickly to our emails to give this additional information and this adds to the reproducibility factor as is mentioned here [[1]](#1).
 
-*To be done:*
-Some inconsistencies when comparing the paper and the appendix about the observations used. 8 or 32.
-We didn’t find out what time horizon meant as parameter*
-The author doesn't matter if the LSTM is used for the RNN. (I think)
-*Author doesnt mention the absolute training time*
+Also, some other inconsistencies were found in the paper and appendix reducing the reproducibility.
+- The observations used in the FNN were different in the paper (8) and the appendix (32).
+- The size of each model should be equal according to the appendix but that LSTM is described to have 128 less neurons.
+- We were also not sure what to do with the time horizon parameter as it isn't explained anywhere in the paper.
+
 # Conclusion
 <!--Gijs-->
+The reproducibility of the paper was good. Some information was missing, but the author quickly responded to any of our questions.
+We did however see different results than the author was claiming. The IAM network containing the FNN and GRU did not have a higher performance than just a single GRU. 
+On average the GRU performed slightly better, and the training time was also 20% faster compared to the IAM network. 
+Our intuition tells us that this is because the GRU model has much fewer parameters than the IAM network. 
+In hindsight, after all the results had been created, it would have been better to have the same number of parameters for each model for a better comparison. 
+This is also mentioned in the paper.
 
-*Overall the paper was good reproducible. And we want to note that the author gave feedback very quickly which adds to the reproducibility factor. 
-However we got different results compared to the paper, IAM gave in our case not the best results, but the FNN with one observation did.*
+We do want to note that we did not do any experiments with the Atari environments because of the long training time and the author does claim that 
+the advantage of the IAM model becomes more apparent when increasing the dimensionality of the problem. That's, for future work.
 
-# Links
+## Links
 Authors implementation: https://github.com/INFLUENCEorg/influence-aware-memory  
 Paper: https://arxiv.org/pdf/1911.07643.pdf  
 PPO implementation used: https://github.com/ikostrikov/pytorch-a2c-ppo-acktr-gail
+
+## References
+<a id="1">[1]</a> 
+Raff, E. (2019). A Step Toward Quantifying Independently Reproducible Machine Learning Research. NeurIPS.
