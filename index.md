@@ -16,7 +16,22 @@ At last, we discuss our results in a comparison with that of the paper and give 
 *How the environment works*
 
 # The design of IAM
-<!--Erik-->
+As introduced in the introduction the IAM stands for influence aware memory, meaning that the architecture is intended to only remember relevant parts of the environment. 
+This is done by letting the RNN focus on a fraction of the environment or observations. 
+
+The model is used with an agent that uses reinforcement learning (RL). 
+In reinforcement learning, the main characters are the agent and the environment. 
+The environment is the place where the agent makes observations and with which it interacts. 
+Each iteration the agent sees an observation of the state of the environment, based on these observations the agent makes decisions out of a certain set of possible actions. 
+This way the agent moves or interacts with its environment and get its rewards. 
+This reward tells the agent how good it is performing. 
+The goal of reinforcement learning is to get an agent that gives a high reward i.e. performs well. 
+
+The actual RL algorithm which is used to train the model is PPO. 
+This algorithm focuses on taking the biggest steps possible to improve, without stepping so far that the performance suddenly collapses. 
+
+Now having explained the RL part of the system let’s discuss the IAM model.
+
 
 # Implementation in Pytorch
 <!--Gijs-->
