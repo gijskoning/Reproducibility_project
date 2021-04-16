@@ -1,6 +1,16 @@
 # Introduction
 <!--Erik-->
-
+In this blog, we are going to tell about the IAM [^iam-paper] paper and how we tried to reproduce some results of that paper.
+The title of the IAM paper is Influence-aware memory architectures for deep reinforcement learning and authored by Miguel Suau et al.
+The idea of the project was to reimplement the IAM model with a different library and to reproduce some results given in the paper.
+The main idea of the paper is to propose an architecture where the agent has some influence-aware memory (IAM).
+The agent makes its decisions based on a reinforcement learning model.
+With this architecture, it is then possible to remember the useful information from the environment while alleviating the training difficulties compare to conventional methods using RNNs.
+The goal of the paper is to show that architecture indeed has an important effect on convergence, learning speed and performance of the agent.
+We reproduced the implementation and repeated some of the experiments described in the paper to see if we got some similar results. 
+The design of the IAM described will be explained in greater detail in the next section.
+After that, we will dive into our implementation and the results we got from that implementation. 
+At last, we discuss our results in a comparison with that of the paper and give a short conclusion of the project.
 *Write about Reinforcement learning*
 *What the author wanted to achieve*
 *How the environment works*
