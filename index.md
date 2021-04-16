@@ -49,6 +49,7 @@ The static set and dynamic one.
 The static set can be used in environments where the interesting parts of the environment do not change over time, while dynamic can be used when they do. 
 For example, when playing pong the ball and players move constantly in the environment. 
 The direction of the ball is relevant to remember, a dynamic selection operator is needed to select the area where the ball is.
+
 ![image](page/images/iam_model.png) <a id="fig1"></a> 
 *Diagram of the IAM model from Figure 3 of the paper.*
 
