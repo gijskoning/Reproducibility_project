@@ -1,3 +1,4 @@
+https://gijskoning.github.io/ReproducingCURL/
 # Reproducibility project
 This repository is an assignment of the Deep Learning course given by the TUDelft.
 It reproduces the paper "Influence-aware Memory Architectures for Deep Reinforcement Learning" written by Miguel Suau ([link](https://arxiv.org/abs/1911.07643)).
